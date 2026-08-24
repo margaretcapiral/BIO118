@@ -1,0 +1,134 @@
+---
+title: "Capiral_Margaret_Lab2"
+output: html_document
+date: "2026-08-24"
+---
+
+short introduction
+
+# Laboratory Exercise 2A
+
+## 2.3 Practice
+
+### 2.3.1 Monitoring Species Population in Different Habitats
+
+```{r}
+species_name <- "Setophaga petechia"
+species_upper <- toupper(species_name)
+print(species_upper) 
+class(species_upper) 
+
+habitat_A_population <- 320
+habitat_B_population <- 275
+
+total_population <- habitat_A_population + habitat_B_population
+print (total_population)
+
+is_habitat_A_larger <- habitat_A_population > habitat_B_population
+print (is_habitat_A_larger)
+
+population_difference <- habitat_A_population - habitat_B_population
+print(population_difference)
+```
+
+### 2.3.2 Analyzing Environmental Data for Climate Change Impact
+
+```{r}
+current_temperature <- 25
+print (current_temperature)
+predicted_increase <- 3.8
+print (predicted_increase)
+future_temperature <- current_temperature + predicted_increase
+print (future_temperature)
+current_temperature_farenheit <- (current_temperature * 9/5) + 32
+print (current_temperature_farenheit)
+future_temperature_farenheit <- (future_temperature * 9/5) + 32
+print (future_temperature_farenheit)
+exceeds_threshold <- future_temperature > 5
+print (exceeds_threshold)
+```
+
+### 2.3.3 Evaluating Pollutant Levels in a River
+
+```{r}
+chemical_X_concentration <- 15.3
+print (chemical_X_concentration)
+chemical_Y_concentration <- 9.8
+print (chemical_Y_concentration)
+is_chemical_X_safe <- chemical_X_concentration < 10
+print (is_chemical_X_safe)
+is_chemical_Y_safe <- chemical_Y_concentration < 10
+print (is_chemical_Y_safe)
+are_both_safe <- is_chemical_X_safe & is_chemical_Y_safe
+print (are_both_safe)
+```
+
+# Laboratory Exercise 2B: Understanding Data Structures
+
+## 2.2 Practice
+
+### 2.2.1 Working with DNA Sequences
+
+```{r}
+dna_sequences <- c("ATGCGTACGTAGCTAGCGT", "ATGCGTACGTAGTTAGCGT", "ATGCGTACGTAGATAGCGT")
+nchar(dna_sequences)
+library(stringr)
+str_count(dna_sequences, "A")
+```
+
+### 2.2.2 Monitoring Species Population in Different Habitats
+```{r}
+biodiversity_data <- data.frame(
+  Species = c("Oak", "Pine", "Maple", "Birch", "Spruce", 
+              "Cedar", "Ash", "Fir", "Beech"),
+  Count = c(120, 85, 100, 60, 150, 75, 55, 95, 110),
+  Habitat = c("Forest_A", "Forest_A", "Forest_A",
+              "Forest_B", "Forest_B", "Forest_B",
+              "Forest_C", "Forest_C", "Forest_C")
+)
+
+print(biodiversity_data)
+
+total_per_habitat <- tapply(
+  biodiversity_data$Count,
+  biodiversity_data$Habitat,
+  sum
+)
+
+print(total_per_habitat)
+
+species_less_than_60 <- subset(biodiversity_data, Count < 60)
+
+print(species_less_than_60)
+```
+
+### 2.2.3 Monitoring Temperature Changes
+```{r}
+monthly_temps <- matrix(
+  c(2.5, 3.1, 6.2, 10.5, 15.3, 20.1, 22.4, 21.9, 18.3, 13.8, 7.5, 3.9,
+    2.7, 3.5, 6.8, 11.0, 16.0, 21.0, 23.1, 22.5, 19.0, 14.5, 8.0, 4.1),
+  nrow = 12,
+  ncol = 2
+)
+
+rownames(monthly_temps) <- c(
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+)
+
+colnames(monthly_temps) <- c("Year_1", "Year_2")
+
+print(monthly_temps)
+
+average_temps <- colMeans(monthly_temps)
+
+print(average_temps)
+
+year_2_higher <- average_temps["Year_2"] > average_temps["Year_1"]
+
+print(year_2_higher)
+
+summer_temps <- monthly_temps[c("June", "July", "August"), ]
+
+print(summer_temps)
+```
