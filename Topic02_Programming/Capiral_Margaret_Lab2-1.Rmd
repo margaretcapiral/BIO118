@@ -3,8 +3,19 @@ title: "Capiral_Margaret_Lab2"
 output: html_document
 date: "2026-08-24"
 ---
+Bio 118 Laboratory Exercise 2
 
-short introduction
+Name: Margaret Capiral
+
+Section: A2
+
+Date: August 24, 2026
+
+GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
+
+# Introduction
+
+R uses different data types and structures to organize and work with information in data analysis. In this activity, the basic data types and operators in R are introduced through biological and environmental examples. The activity also focuses on common data structures, including vectors, matrices, data frames, lists, and factors. Understanding these concepts is important for properly storing, accessing, and manipulating biological data.
 
 # Laboratory Exercise 2A
 
@@ -132,3 +143,9 @@ summer_temps <- monthly_temps[c("June", "July", "August"), ]
 
 print(summer_temps)
 ```
+
+# Reflection
+This activity helped me better understand how different data types and structures are used in R. I learned how operators can be applied to biological and environmental data to perform calculations and make comparisons. Working with vectors, matrices, data frames, lists, and factors also helped me see how different types of information can be organized. This laboratory activity made the basic concepts of working with data in R clearer and more practical.
+
+# Conclusion
+In conclusion, the activities focused on understanding data types, operators, and data structures in R. We practiced creating and manipulating different types of data and using arithmetic, relational, and logical operators. We also worked with vectors, matrices, data frames, lists, and factors to organize and retrieve biological data. These activities provided a foundation for handling and analyzing biological datasets using R.
