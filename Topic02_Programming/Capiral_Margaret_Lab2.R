@@ -244,13 +244,7 @@ print(year_2_higher)
 summer_temps <- monthly_temps[c("June", "July", "August"), ]
 
 # Display the summer temperatures
-print(summer_temps)
-
-
-
-
-
-
+print(summer_temps) 
 
 
 

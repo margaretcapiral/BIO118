@@ -9,7 +9,7 @@ Name: Margaret Capiral
 
 Section: A2
 
-Date: August 24, 2026
+Date: August 24, 2026 
 
 GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
 
