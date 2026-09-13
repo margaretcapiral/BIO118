@@ -1,0 +1,188 @@
+---
+title: "Capiral_Margaret_Lab2-2"
+output: html_document
+date: "2026-09-13"
+---
+Bio 118 Laboratory Exercise 2-2
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: September 13, 2026 
+
+GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
+
+# Introduction
+R uses control structures and functions to organize how instructions are carried out during data analysis. In this activity, conditional statements, loops, and user-defined functions are introduced through biological and environmental examples. The activity also focuses on using these tools to automate repeated tasks, make decisions based on specific conditions, and perform calculations more efficiently. Understanding these concepts is important for writing clearer and more organized R programs.
+
+# Laboratory Exercise 2C
+
+## 2.4 Practice
+
+### 2.4.1 Analyzing Gene Expression Data
+```{r}
+gene_expression <- data.frame(
+  Gene = c("GeneA", "GeneB", "GeneC", "GeneD", "GeneE",
+           "GeneA", "GeneB", "GeneC", "GeneD", "GeneE",
+           "GeneA", "GeneB", "GeneC", "GeneD", "GeneE"),
+  
+  Expression_Level = c(15.3, 10.8, 12.5, 18.1, 11.7,
+                       20.2, 17.6, 14.3, 19.5, 16.2,
+                       13.8, 21.1, 19.7, 22.5, 20.3),
+  
+  Tissue = c("Tissue1", "Tissue1", "Tissue1", "Tissue1", "Tissue1",
+             "Tissue2", "Tissue2", "Tissue2", "Tissue2", "Tissue2",
+             "Tissue3", "Tissue3", "Tissue3", "Tissue3", "Tissue3")
+)
+
+print(gene_expression)
+
+for (i in 1:nrow(gene_expression)) {
+  
+  if (gene_expression$Expression_Level[i] > 20) {
+    
+    print(paste("Gene:", gene_expression$Gene[i],
+                "- Tissue:", gene_expression$Tissue[i]))
+  }
+}
+
+tissue_data <- gene_expression[gene_expression$Tissue == "Tissue2", ]
+
+i <- 1
+
+while (i <= nrow(tissue_data)) {
+  
+  print(tissue_data[i, ])
+  
+  if (tissue_data$Expression_Level[i] < 15) {
+    break
+  }
+  
+  i <- i + 1
+}
+```
+
+### 2.4.2 Monitoring Species Populations
+```{r}
+species_populations <- c(150, 45, 75, 200, 30)
+for (i in 1:length(species_populations)) {
+  
+  if (species_populations[i] < 50) {
+    print(paste("Species", i, "- Endangered"))
+  } else {
+    print(paste("Species", i, "- Stable"))
+  }
+}
+growth_rate <- 0.05
+
+for (i in 1:length(species_populations)) {
+  
+  population <- species_populations[i]
+  
+  for (year in 1:3) {
+    
+    population <- population * (1 + growth_rate)
+    
+    print(paste("Species", i,
+                "- Year", year,
+                "- Population:", round(population, 2)))
+  }
+}
+```
+
+### 2.4.3 Monitoring Water Quality
+```{r}
+pollution_levels <- c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+
+for (level in pollution_levels) {
+  
+  if (level < 50) {
+    next
+  }
+  
+  if (level > 50) {
+    print(paste("Warning: Pollution level is", level, "ppm"))
+  }
+}
+i <- 1
+
+repeat {
+  
+  level <- pollution_levels[i]
+  
+  if (level == 90) {
+    print(paste("Critical warning:", level, "ppm detected"))
+    break
+  }
+  
+  i <- i + 1
+}
+
+i <- 1
+
+repeat {
+  
+  level <- pollution_levels[i]
+  
+  if (level == 90) {
+    print(paste("Critical warning:", level, "ppm detected"))
+    break
+  }
+  
+  i <- i + 1
+}
+```
+
+# Laboratory Exercise 2D
+
+## 2.2 Practice
+
+### 2.2.1 DNA Transcription
+
+```{r}
+transcribe_dna_to_rna <- function(dna_sequence) {
+  rna_sequence <- gsub("T", "U", dna_sequence)
+  return(rna_sequence)
+}
+
+dna_sequence <- "ATGCGTACGTAGCTAGCGT"
+transcribe_dna_to_rna(dna_sequence)
+```
+
+### 2.2.2 Predicting Future Population Size
+```{r}
+predict_population <- function(current_population, growth_rate, years) {
+  future_population <- current_population * (1 + growth_rate)^years
+  return(future_population)
+}
+
+predict_population(1000, 0.05, 10)
+```
+
+### 2.2.3 Environmental Decay Simulation
+```{r}
+simulate_decay <- function(initial_concentration, decay_rate) {
+  concentration <- initial_concentration
+  steps <- 0
+  
+  while (concentration >= 1) {
+    concentration <- concentration * (1 - decay_rate)
+    steps <- steps + 1
+  }
+  
+  return(steps)
+}
+
+simulate_decay(50, 0.10)
+```
+
+# Reflection
+Through these activities, I became more familiar with how R follows conditions, repeats instructions, and performs specific tasks through functions. At first, some of the loops and function structures required more attention because small changes in the code could affect the result. Working through examples involving gene expression, population growth, water quality, DNA transcription, and environmental decay helped me understand how these programming tools can be applied to biological data. I also realized that learning how to structure code properly is important because it makes the analysis easier to follow and reduces the need to repeat the same commands.
+
+# Conclusion
+The activities in 2C and 2D showed how R can be used to control how data are processed and how repeated tasks are performed. Control structures such as if, for, while, repeat, break, and next made it possible to evaluate conditions and automate different biological and environmental examples. User-defined functions also helped organize calculations into reusable blocks of code that can accept inputs and return specific results. These exercises demonstrated how combining control structures and functions can make R scripts more efficient, organized, and easier to apply to different datasets.
+
+
+
+
