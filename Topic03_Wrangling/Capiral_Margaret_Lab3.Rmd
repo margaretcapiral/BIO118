@@ -1,0 +1,274 @@
+---
+title: "Capiral_Margaret_Lab3"
+output: html_document
+date: "2026-09-14"
+---
+Bio 118 Laboratory Exercise 2-2
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: September 13, 2026 
+
+GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
+
+# Introduction
+Biological data often need to be cleaned, transformed, and organized before they can be properly analyzed. This laboratory exercise introduced different R packages and functions used for tidying data, transforming variables, standardizing text, handling dates and factors, and organizing project files.   These activities also emphasized the importance of using clear and reproducible workflows when working with biological datasets.  Overall, the exercise provided practical experience in preparing data and files for further analysis in R.
+
+## 3A Tidying Data Using tidyr
+
+### 3. 7 Practice: Simulated Gene Expression Dataset
+
+```{r}
+library(tidyr)
+library(dplyr)
+
+gene_expression <- data.frame(
+  gene_id = c("Gene1", "Gene2", "Gene3", "Gene4"),
+  ctrl_brain_rep1 = c(12, 18, 23, 9),
+  ctrl_brain_rep2 = c(11, 19, 24, 10),
+  treat_brain_rep1 = c(15, 21, 28, 11),
+  treat_brain_rep2 = c(14, 22, 30, 12),
+  ctrl_liver_rep1 = c(22, 30, 35, 20),
+  ctrl_liver_rep2 = c(21, 31, 36, 21),
+  treat_liver_rep1 = c(26, NA, 39, 25),
+  treat_liver_rep2 = c(27, 34, 40, 26)
+)
+
+print(gene_expression)
+```
+
+#### Convert gene_expression from wide format to long format.
+```{r}
+long_gene_expression <- gene_expression %>%
+  pivot_longer(
+    cols = -gene_id,
+    names_to = "measurement",
+    values_to = "expression"
+  )
+```
+
+#### Examine long_gene_expression using print().
+```{r}
+print(long_gene_expression, n=Inf)
+```
+
+#### Use separate() to split this information into three columns named condition, tissue, and replicate.
+```{r}
+tidy_gene_expression <- long_gene_expression %>%
+  separate(
+    measurement,
+    into = c("condition", "tissue", "replicate"),
+    sep = "_"
+  )
+
+print(tidy_gene_expression, n=Inf)
+```
+
+#### Examine tidy_gene_expression and identify the missing expression value. Which gene, condition, tissue, and replicate have a missing expression value? Should this observation be removed from the dataset? Briefly explain your answer.
+
+Gene 2 treatment liver replicate 1 contains the missing expression value. I would not immediately remove the observation because the missing value may be due to a measurement or recording issue, and the rest of the identifying information is still valid. It is better to keep the row and handle the NA appropriately during analysis, unless there is a clear reason to exclude it. 
+
+#### Starting with the original gene_expression dataset, recreate tidy_gene_expression using a single piped workflow. 
+```{r}
+tidy_gene_expression <- gene_expression %>%
+  pivot_longer(
+    cols = -gene_id,
+    names_to = "measurement",
+    values_to = "expression"
+  ) %>%
+  separate(
+    measurement,
+    into = c("condition", "tissue", "replicate"),
+    sep = "_"
+  )
+
+print(tidy_gene_expression, n=Inf)
+```
+
+## 3B Transforming Data Using dplyr
+
+### 3. 7 Practice: Simulated Gene Expression Dataset
+```{r}
+library(dplyr)
+
+# Simulate the dataset
+set.seed(123)
+
+species_list <- c("Species_A", "Species_B", "Species_C", "Species_D")
+region_list <- c("Region_1", "Region_2", "Region_3")
+
+years <- sample(2000:2020, 100, replace = TRUE)
+abundance <- sample(1:500, 100, replace = TRUE)
+temperature <- sample(15:35, 100, replace = TRUE)
+
+abundance_data <- data.frame(
+  species = sample(species_list, 100, replace = TRUE),
+  region = sample(region_list, 100, replace = TRUE),
+  year = years,
+  abundance = abundance,
+  temperature = temperature
+)
+
+print(abundance_data)
+```
+
+#### Filter the dataset to include only observations where the abundance is greater than 100 and the temperature is above 20°C.
+```{r}
+filtered_abundance <- abundance_data %>%
+  filter(abundance > 100, temperature > 20)
+
+print(filtered_abundance)
+```
+
+#### Select only the species, region, and abundance columns from the dataset.
+```{r}
+selected_abundance <- abundance_data %>%
+  select(species, region, abundance)
+
+print(selected_abundance)
+```
+
+#### Arrange the data by species in alphabetical order and then by abundance in descending order.
+```{r}
+arranged_abundance <- abundance_data %>%
+  arrange(species, desc(abundance))
+
+print(arranged_abundance)
+```
+
+#### Calculate the overall total abundance and the average temperature across all species and regions.
+```{r}
+summary_abundance <- abundance_data %>%
+  summarize(
+    total_abundance = sum(abundance),
+    average_temperature = mean(temperature)
+  )
+
+print(summary_abundance)
+```
+
+#### Group the data by species and calculate the mean abundance for each species.
+```{r}
+species_mean_abundance <- abundance_data %>%
+  group_by(species) %>%
+  summarize(
+    mean_abundance = mean(abundance)
+  )
+
+print(species_mean_abundance)
+```
+
+#### Use the pipe operator %>% to complete the following tasks in a single pipeline: Filter the dataset to include observations from years after 2010; Group the data by region; Calculate the mean abundance and mean temperature for each region; Arrange the results in descending order of mean abundance.
+```{r}
+region_summary <- abundance_data %>%
+  filter(year > 2010) %>%
+  group_by(region) %>%
+  summarize(
+    mean_abundance = mean(abundance),
+    mean_temperature = mean(temperature)
+  ) %>%
+  arrange(desc(mean_abundance))
+
+print(region_summary)
+```
+
+## 3C Wrangling Data Using stringr, forcats, and lubridate
+
+### 3.5 Practice: Simulated Cell Biology Experiment Data
+
+#### Required packages
+```{r}
+library(dplyr)
+library(stringr)
+library(forcats)
+library(lubridate)
+```
+
+#### Dataset
+```{r}
+cell_data <- data.frame(
+  cell_line = c("HEK293 ", "HeLa", "A549 ", "HepG2", "HeLa", "HEK293"),
+  gene_expression = c("BRCA1_001", "TP53_002", "MYC_003",
+                      "EGFR_001", "BRCA2_004", "EGFR_005"),
+  treatment = c("Control", "control", "Treatment",
+                "TREATMENT", "Control", "control"),
+  observation_time = c("2023-07-15 08:30:00",
+                       "2023-07-15 10:45:00",
+                       "2023-07-16 09:00:00",
+                       "2023-07-16 11:20:00",
+                       "2023-07-17 12:15:00",
+                       "2023-07-17 13:00:00")
+)
+
+print(cell_data)
+```
+
+#### Clean and Standardize String Data
+```{r}
+cell_data <- cell_data %>%
+  mutate(
+    cell_line = str_trim(cell_line),
+    treatment = str_to_lower(treatment)
+  )
+
+print(cell_data)
+```
+
+#### Convert and Reorder Factor Levels
+```{r}
+cell_data <- cell_data %>%
+  mutate(
+    treatment = factor(treatment),
+    cell_line = factor(cell_line),
+    treatment = fct_relevel(treatment, "treatment", "control"),
+    cell_line = fct_infreq(cell_line)
+  )
+
+levels(cell_data$treatment)
+levels(cell_data$cell_line)
+```
+
+#### Work with Date and Time Data
+```{r}
+cell_data <- cell_data %>%
+  mutate(
+    observation_time = ymd_hms(observation_time)
+  )
+
+class(cell_data$observation_time)
+```
+
+```{r}
+cell_data <- cell_data %>%
+  mutate(
+    year = year(observation_time),
+    month = month(observation_time),
+    day = day(observation_time),
+    hour = hour(observation_time)
+  )
+
+print(cell_data)
+```
+
+```{r}
+cell_data <- cell_data %>%
+  mutate(
+    hours_since_first_observation = as.numeric(
+      difftime(
+        observation_time,
+        min(observation_time),
+        units = "hours"
+      )
+    )
+  )
+
+print(cell_data)
+```
+
+# Reflection
+This laboratory exercise helped me understand how to clean, transform, and organize biological data in R. I learned how to use packages such as tidyr, dplyr, stringr, forcats, and lubridate for different data-wrangling tasks. I also learned that keeping files properly organized in an R Project makes the analysis easier to manage and reproduce. The activities helped me become more comfortable working with datasets in R.
+
+# Conclusion
+In conclusion, Laboratory Exercise 3 introduced important techniques for preparing biological data for analysis. I was able to practice tidying, transforming, standardizing, and organizing different types of data. These skills are useful because biological datasets often need to be cleaned and arranged before visualization or statistical analysis. The exercise also showed me the importance of having an organized and reproducible workflow in R.
