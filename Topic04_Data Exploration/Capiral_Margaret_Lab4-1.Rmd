@@ -1,0 +1,396 @@
+---
+title: "Capiral_Margaret_Lab4"
+output: html_document
+date: "2026-09-30"
+---
+Bio 118 Laboratory Exercise 4
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: September 30, 2026 
+
+GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
+
+# Introduction
+Laboratory Exercise 4-1 focused on using R to visualize and explore biological data. We used ggplot2 to create graphs such as scatter plots, histograms, box plots, line plots, and heatmaps. We also performed exploratory data analysis by examining distributions, relationships, missing values, and unusual observations in the airquality and WHO TB datasets. These activities helped us understand how visualization can make patterns in data easier to interpret.     Lab Exercise 4A Visualization
+
+## 4.8 Practice Exercises
+```{r}
+library(ggplot2)
+```
+### 1. Using the airquality dataset, create a scatter plot showing the relationship between Wind and Ozone. Color the points according to Month, treating Month as a categorical variable. Add a meaningful title and clear x- and y-axis labels.
+```{r}
+ggplot(
+data = airquality,
+aes(
+x = Wind,
+y = Ozone,
+color = factor(Month)
+)
+) +
+geom_point(na.rm = TRUE) +
+  labs (
+    title = "Relationship between Wind and Ozone"
+  )
+```
+
+### 2. Using the airquality dataset, create a line plot showing how Ozone changes across Day. Use Month to distinguish the lines by color and group, treating Month as a categorical variable. (5 points)
+```{r}
+ggplot(
+airquality,
+aes(
+x = Day,
+y = Ozone,
+group = Month,
+color = factor(Month)
+)
+) +
+  geom_line(na.rm = TRUE) +
+  labs (
+    title = "How Ozone Changes Across Day"
+  )
+```
+
+### 3. Create a histogram showing the distribution of Wind. Choose an appropriate binwidth, add a meaningful title, and add clear x- and y-axis labels. Then briefly describe the distribution shown by your histogram. (7 points)
+```{r}
+ggplot(
+airquality,
+aes(x = Wind)
+) +
+geom_histogram(
+binwidth = 1.5,
+fill = "lightblue",
+color = "black"
+) + labs (
+    title = "Distribution of Wind"
+)
+```
+
+The distribution of Wind is unimodal and slightly right-skewed. Most wind values are concentrated between about 6 and 15, with the highest frequency around 7–9. A few larger wind values extend beyond 18–20, creating a longer tail on the right.
+
+### 4. Use a box plot to compare Temp among the five months. Treat Month as a categorical variable.
+```{r}
+ggplot(
+airquality,
+aes(
+x = Month,
+y = Temp,
+fill = factor(Month)
+)
+) +
+geom_boxplot() +
+  theme_classic() +
+  labs (
+    title = "Temperature Distribution Across 5 Months"
+)
+```
+### 5. Investigate the relationship between Wind and Temp. Create a scatter plot and add a linear trend line using method = "lm". Do not display the uncertainty band. Use an appropriate title, axis labels, and theme. (6 points)
+```{r}
+ggplot(
+airquality,
+aes(
+x = Wind,
+y = Temp,
+color = factor(Month)
+)
+) +
+geom_point() +
+geom_smooth(
+method = "lm",
+se = FALSE
+) + 
+  labs (
+    title = "Relationship Between Wind and Temp"
+)
+```
+
+### 6. Create a scatter plot showing the relationship between Wind and Ozone. Use facet_wrap() to create a separate panel for each Month. Add appropriate axis labels and a meaningful title. (5 points)
+```{r}
+ggplot(
+airquality,
+aes(
+x = Wind,
+y = Ozone,
+color = factor(Month)
+)
+) +
+geom_point(na.rm = TRUE) +
+facet_wrap(~ Month) +
+  labs (
+    title = "Relationship Between Wind and Ozone"
+  )
+```
+
+
+### 7. Calculate the mean Temp for each Month using aggregate(). Then use geom_col() to create a bar plot showing the mean temperature for each month. Treat Month as a categorical variable in the visualization. Use Month as the x-axis and distinguish the bars by month using fill. Add appropriate labels. (7 points)
+```{r}
+mean_Temp <- aggregate(Temp ~ Month, data = airquality, mean)
+```
+
+```{r}
+ggplot(
+mean_Temp,
+aes(
+x = Month,
+y = Temp,
+fill = factor(Month)
+)
+) +
+geom_col() +
+  labs (
+    title = "Mean Temperature for Each Month"
+  )
+```
+
+### 8. Create a heatmap using the airquality dataset. Map Day to the x-axis and Month to the y-axis, treating Month as a categorical variable. Use Temp as the fill aesthetic to represent temperature. Apply theme_bw(). Based on the heatmap, identify the period with the highest temperature. (6 points)
+```{r}
+ggplot(
+airquality,
+aes(
+x = Day,
+y = Month,
+fill = Temp
+)
+) +
+geom_tile() +
+  theme_bw()
+```
+
+The heatmap shows that the period with the highest temperature occurred in late August. 
+
+### 9. Select one of your completed visualizations from Exercises 1–8 and save it as: Lastname_Firstname_Plot.jpeg using ggsave(). Set dpi = 300. Choose appropriate values for width and height. (2 points)
+```{r}
+Wind_and_Ozone_Relationship_plot <- ggplot(
+data = airquality,
+aes(
+x = Wind,
+y = Ozone,
+color = factor(Month)
+)
+) +
+geom_point(na.rm = TRUE) +
+  labs (
+    title = "Relationship between Wind and Ozone"
+  )
+```
+
+```{r}
+ggsave(
+  "Capiral_Margaret_Plot.jpeg",
+  plot = Wind_and_Ozone_Relationship_plot,
+  width = 6,
+  height = 4,
+  dpi = 300
+)
+```
+
+## BIO 118 Laboratory Exercise 4B: Exploratory Data Analysis
+
+### 4.1.2 Load the WHO dataset
+```{r}
+library(tidyverse)
+data("who")
+```
+
+### Guide Questions
+
+1. How many observations and variables are in the dataset?
+- 7,240 observations (rows)
+- 60 variables (columns)
+
+2. Which variables identify the country and year?
+- country identifies the country by name.
+- iso2 and iso3 are country codes.
+- year identifies the year of the observation.
+
+3. Which variables contain information about TB cases?
+- The variables containing information about tuberculosis cases are mainly those beginning with names such as new_sp_, new_sn_, and other new_ prefixes. These variables represent different categories of TB cases. Their names also contain information about characteristics such as sex and age group. For example, a variable like new_sp_m014 refers to new smear-positive pulmonary TB cases among males aged 0–14 years.
+
+4. What types of variables are country and year?
+- Country is stored as a character variable, while year is stored as a numeric. 
+
+```{r}
+class(who$country)
+class(who$year)
+```
+
+5. What do you notice about the structure of the TB case variables?
+- One noticeable feature of the dataset is that the TB case information is arranged in a wide format. Instead of having separate columns for sex, age group, and TB type, these details are combined and encoded within the variable names. This makes the dataset more difficult to analyze directly and suggests that it may need to be reorganized into a tidy or long format. The dataset also contains many NA values, indicating that some TB case information is missing or unavailable for certain country-year combinations.
+
+### 4.2. Examining Missing Data
+```{r}
+colSums(is.na(who))
+```
+
+#### Guide Questions:
+6. Which variables contain missing values?
+- The iso2 variable contains some missing values, with 34 missing observations. The TB case variables also contain many missing values, including variables beginning with new_sp_, new_sn_, new_ep_, and newrel_. In contrast, country, iso3, and year have no missing values.
+
+7. Are missing values common or uncommon in the TB case variables?
+- Missing values are very common in the TB case variables. Many of these variables have several thousand missing observations out of the 7,240 total records. Some variables, such as those beginning with newrel_, have more than 7,000 missing values, showing that data for certain TB categories were available for only a small portion of the observations.
+
+8. Why might missing observations occur in a large international dataset?
+- Missing observations may occur because countries differ in their ability and methods of collecting and reporting health data. Some countries may not have collected information for particular years, age groups, sexes, or TB categories. Reporting systems and definitions may also have changed over time, and some countries may have submitted incomplete or delayed records. Therefore, missing data are expected in a large international dataset that combines information from many countries and years.
+
+### 4.4 Defining the Data for Analysis
+
+#### Guide Questions:
+
+9. What does type == "sp" represent in the dataset?
+
+### 4.5. Exploring Variation and Distributions
+
+### 4.5.1 TB cases across years
+
+#### Guide Questions:
+
+10. What general pattern do you observe over time?
+- The number of recorded TB cases shows an overall increasing trend over time. From 1980 to 1994, the number of recorded cases remained very low. Beginning in 1995, however, the number increased sharply and continued to rise until around 2008. After reaching its highest levels between 2008 and 2011, the number of recorded cases became relatively stable and then showed a slight decrease by 2012.
+
+11. Are there periods when the number of recorded cases changes substantially?
+- Yes. The most noticeable change occurs between 1994 and 1995, when recorded cases increase dramatically from 750 cases in 1994 to more than 500,000 cases in 1995. Another period of substantial increase occurs from the late 1990s to the mid-2000s, with recorded cases eventually exceeding 2 million. From around 2008 onward, the changes become smaller, with the number of cases fluctuating around 2.5 to 2.6 million.
+
+12. What are some possible explanations for changes in recorded cases?
+- The changes in recorded TB cases may be influenced not only by actual changes in tuberculosis occurrence but also by changes in data collection and reporting. Earlier years contain many missing observations, so the very low totals before 1995 may indicate that fewer countries or TB categories were being reported rather than that TB was extremely rare during those years. Improvements in surveillance systems, increased participation of countries, changes in reporting standards, and better detection and diagnosis of TB could have caused the large increase in recorded cases. Therefore, the graph should be interpreted as showing changes in recorded cases, rather than automatically assuming that every increase represents an actual increase in TB incidence.
+
+### 4.5.2 Comparing Categories: Summarize cases by sex
+
+#### Guide Questions:
+
+13. Which sex has the greater number of recorded cases in this dataset?
+- The dataset shows about 20.6 million cases among males compared with about 11.3 million cases among females.
+
+14. What does this comparison tell you?
+- This comparison shows that, in this dataset, more TB cases were recorded among males than females. The number of recorded male cases is substantially higher than the number of recorded female cases.
+
+15. What does it not tell you about the risk of TB between males and females?
+- This comparison does not directly tell us that males have a higher risk of developing TB. The graph only compares the total number of recorded cases. It does not account for differences in the number of males and females in the population, differences in healthcare access, diagnosis, reporting, age distribution, or other factors. 
+
+### 4.5.3 Examining Variation Across Age Groups: Summarize by age group
+
+#### Guide Questions:
+
+16. Which age group has the largest number of recorded cases?
+- The 25–34 age group has the largest number of recorded TB cases, with 7,435,960 cases.
+
+17. Which age group has the smallest number?
+- The 0–14 age group has the smallest number of recorded cases, with 628,491 cases.
+
+18. What pattern do you observe across age groups?
+- The number of recorded TB cases increases sharply from the 0–14 age group and reaches its highest level among those aged 25–34. After that, the number of cases gradually decreases across the older age groups. Overall, the highest burden of recorded TB cases appears to be among young and middle-aged adults, while children have the lowest number of recorded cases.
+
+### 4.6 Bivariate Analysis
+
+#### Guide Questions:
+
+19. How do the patterns for males and females change over time?
+- Both males and females show very low recorded TB case counts in the earlier years, followed by a sharp increase beginning around the mid-1990s. The number of cases continues to rise through the 2000s, then levels off and slightly fluctuates toward the later years. Throughout the period, males consistently have more recorded cases than females.
+
+20. Do the two groups show similar or different trends?
+- The two groups show similar overall trends. Both increase over time, rise rapidly during the late 1990s and early 2000s, and then become relatively stable in the later years. However, the male counts remain higher than the female counts throughout the period.
+
+21. Are there periods where the difference between the groups appears larger?
+- Yes. The difference between males and females becomes noticeably larger from around the early 2000s onward, especially as the number of recorded cases increases rapidly. By the late 2000s, the gap is much wider, with male recorded cases substantially higher than female recorded cases.
+
+### 4.7. Multivariable Exploration
+
+#### Guide Questions:
+
+22. Do the patterns across age groups appear similar?
+- Yes. Most age groups show a similar general pattern over time. Recorded TB cases remain very low in the earlier years, then begin to increase around the mid-1990s. The counts continue to rise through the 2000s, reach a peak or plateau in the late 2000s, and then slightly decline or level off in the most recent years.
+
+23. Which age groups show the largest number of recorded cases?
+- The 25–34 and 35–44 age groups show the largest numbers of recorded TB cases. These groups reach the highest values in the graph, especially among males. The 45–54 age group also has relatively high recorded case numbers.
+
+24. How does the pattern differ between males and females?
+- Both males and females generally follow the same trend over time, but males usually have higher recorded TB case counts than females. The difference becomes more noticeable in the adult age groups, particularly from ages 25–34 through 65 and above. In contrast, the youngest age group shows much smaller differences between the two sexes.
+
+25. Are there age groups where the two sexes appear more similar or different?
+- Yes. Males and females appear most similar in the 0–14 age group, where their recorded case counts are relatively close. The difference becomes much larger in the older age groups, especially among those aged 25–34, 35–44, 45–54, 55–64, and 65+, where male cases are considerably higher than female cases.
+
+### 4.8 Investigating Unusual Observations
+
+#### Guide Questions:
+
+26. Does the boxplot show observations that may be unusually high or low?
+- Yes. The boxplot shows many observations that may be considered unusually high because a large number of points appear above the upper whisker. These represent recorded TB case counts that are much higher than most of the observations in the dataset. There do not appear to be unusually low values in the same way, since many observations are already clustered near zero.
+
+27. What biological, sampling, measurement, or data-recording factors might explain an unusual
+observation?
+- An unusually high number of recorded TB cases could result from a country having a very large population, a true increase in TB cases, an outbreak, or differences in disease burden among populations. It could also be caused by improved surveillance, more complete reporting, or changes in diagnostic practices. On the other hand, unusual values may also result from data-entry mistakes, incorrect coding, duplicate records, or differences in how countries report TB cases.
+
+28. What additional information would you check before deciding whether an unusual observation
+represents an error or a meaningful observation?
+- Before deciding whether an unusual value is an error, I would check the country, year, age group, sex, and TB category associated with the observation. I would also compare it with values from the same country in nearby years and check whether the value is consistent with population size and official TB reports. Reviewing the original data source or metadata would also help determine whether the observation is valid.
+
+29. Would you automatically remove these
+observations? Why or why not?
+- No, I would not automatically remove these observations. A value that appears as an outlier in a boxplot is not necessarily an error. It may represent a real and meaningful observation, such as a country with a large population or a high number of TB cases. The observations should first be investigated and only removed if there is clear evidence that they are incorrect, duplicated, or caused by a data-recording problem.
+
+## 4.8. Practice Exercise: EDA Using the airquality dataset
+
+1. Review the airquality dataset. (3 points)
+- Which variables contain missing values?
+  - Ozone and Solar.R contain missing values.
+- Why should missing values be considered when interpreting the visualizations you created in
+Laboratory Exercise 4A?
+  - Missing values matter because rows with NA are excluded from some plots, so the visualization may not represent all observations.
+
+2. Review the histogram of Wind and the box plot of Temp by Month that you created in Laboratory
+Exercise 4A. (4 points)
+- What does the histogram tell you about the distribution of wind speed?
+  - Wind is mostly between 6–15 mph and is slightly right-skewed.
+- How does temperature vary among the different months?
+  - Temperature is generally higher in July and August and lower in May and September.
+- Which visualization is more useful for comparing temperature among months? Explain why.
+  - The box plot is better for comparing months because it shows the median, spread, and possible outliers for each month.
+
+3. Review your: Wind vs Ozone scatter plot, and Wind vs Temp scatter plot with a trend line. (4
+points)
+- What relationship do you observe between wind speed and ozone concentration?
+  - Wind and Ozone show a negative relationship: higher wind is generally associated with lower ozone.
+- What relationship do you observe between wind speed and temperature?
+  - Wind and Temp also show a negative relationship.
+- Which relationship appears clearer or more consistent based on the visualizations? Briefly
+explain what you see.
+  - The relationship between Wind and Ozone appears clearer and more consistent. The downward pattern is more noticeable, whereas the relationship between Wind and Temp shows more scatter around the trend line.
+
+4. Review your faceted Wind vs Ozone scatter plot, where the observations were separated by month.
+(3 points)
+- Does the relationship between wind and ozone appear similar across all months?
+  - The relationship between wind speed and ozone does not appear exactly the same across all months. Although several months generally show decreasing ozone concentrations as wind speed increases, the strength and spread of the relationship vary from month to month.
+- Are there months in which the observations appear more widely spread or show a different
+pattern?
+  - Some months, particularly the warmer months such as July and August, show a wider range of ozone concentrations and greater spread in the observations. Other months have more tightly grouped observations or fewer high-ozone values.
+- Why is faceting useful for exploring this type of dataset?
+  - Faceting is useful because it separates the observations by month, allowing patterns within each month to be examined individually. This helps reveal differences that may be hidden when all months are combined in one scatter plot.
+
+5. Review the visualizations you created in Laboratory Exercise 4A, particularly the scatter plots and box plot. (4 points)
+- Identify one observation or group of observations that appears unusual.
+  - One unusual group of observations is the set of very high ozone concentrations, particularly those much higher than most other ozone measurements. 
+- Which visualization helped you identify it?
+  - These can be seen clearly in the Wind vs. Ozone scatter plot, where a small number of points appear far above the majority of observations.
+- Give one possible explanation for why an observation might appear unusual.
+  - One possible explanation is that the observation reflects unusual environmental conditions, such as a very hot, sunny day with low wind that caused ozone levels to become unusually high.
+- Would you automatically remove the observation? Why or why not?
+  - I would not automatically remove these observations. An unusual value is not necessarily incorrect. It should first be checked against the original record, surrounding observations, and environmental conditions before deciding whether it represents an error or a meaningful extreme event.
+
+6. Based on the patterns you observed in the airquality dataset: (3 points)
+- Write two research questions that could be investigated in a future analysis.
+- At least one question should involve a relationship between two or more variables.
+
+  - Research Question 1: Is wind speed associated with ozone concentration, and does this relationship differ among months?
+  - Research Question 2: Do ozone concentrations significantly differ among months, and are higher ozone levels associated with higher temperatures?
+
+# Reflection
+Through this activity, I learned that choosing the right graph makes it easier to understand the data. I also learned how important it is to check for missing values and unusual observations before making conclusions. Using different plots helped me compare groups and see relationships between variables more clearly. The activity also improved my confidence in using R for data visualization and exploratory analysis.
+
+# Conclusion
+The laboratory exercise demonstrated the importance of data visualization and exploratory data analysis in understanding biological datasets. Different graphs helped reveal trends, differences, relationships, and unusual observations in the data. Missing values and possible outliers also showed why data must be examined carefully before interpretation. These methods are useful for producing clearer and more reliable conclusions from biological data.
+
+
+
+
+
