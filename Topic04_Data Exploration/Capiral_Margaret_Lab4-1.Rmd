@@ -240,6 +240,8 @@ colSums(is.na(who))
 
 9. What does type == "sp" represent in the dataset?
 
+type == "sp" means the data are filtered to include only new smear-positive pulmonary tuberculosis (TB) cases. In the WHO dataset, sp refers to the smear-positive TB category.
+
 ### 4.5. Exploring Variation and Distributions
 
 ### 4.5.1 TB cases across years
