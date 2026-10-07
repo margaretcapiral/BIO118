@@ -312,7 +312,7 @@ ggplot(
 
 ### Do the K-means clusters correspond to visibly different regions of the PCA plot?
 
-- The three clusters occupy different areas of the PCA plot, with most points of the same cluster grouped near each other, although there is some overlap near the boundaries.
+- The three K-means clusters are concentrated in different regions of the PCA plot, showing that observations with similar air-quality measurements are grouped together. However, some points overlap near the cluster boundaries, so the separation is not completely distinct.
 
 ### Compare the K-means plot with your hierarchical clustering dendrogram. Do the two methods appear to identify similar patterns?
 
