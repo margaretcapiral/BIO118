@@ -3,6 +3,15 @@ title: "Capiral_Margaret_Lab4-2"
 output: html_document
 date: "2026-10-05"
 ---
+Bio 118 Laboratory Exercise 4C
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: October 8, 2026 
+
+GitHub repository URL: https://github.com/margaretcapiral/BIO118.git
 
 # Introduction
 
