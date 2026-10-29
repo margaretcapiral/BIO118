@@ -1,0 +1,365 @@
+---
+title: "Capiral_Margaret_Lab6B"
+output: html_document
+date: "2026-10-26"
+---
+
+Bio 118 Laboratory Exercise 6A
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: October 26, 2026
+
+GitHub repository URL: <https://github.com/margaretcapiral/BIO118.git>
+
+# Introduction
+
+Two-way Analysis of Variance (ANOVA) is a statistical method used to determine whether two categorical factors significantly affect a numerical response variable. It examines the main effect of each factor and their interaction to determine whether the effect of one factor depends on the level of the other. In biological research, two-way ANOVA is useful for investigating how different experimental conditions influence biological responses. This laboratory exercise focuses on using two-way ANOVA in RStudio to examine the effects of fertilizer type and irrigation level on plant growth.
+
+# 6.3 Practice Exercise
+
+## 6.3.1 One-way ANOVA (40 points)
+
+### 1. Inspect and prepare the data.
+
+#### a) Load the airquality dataset and inspect its structure.
+
+#### b) Remove observations with missing ozone measurements.
+
+#### c) Convert Month into a factor so that R treats it as a categorical grouping variable.
+
+#### d) Check the number of observations in each month.
+
+```{r}
+data("airquality")
+
+head(airquality)
+str(airquality)
+summary(airquality)
+
+airquality_clean <- airquality[!is.na(airquality$Ozone), ]
+
+airquality_clean$Month <- as.factor(airquality_clean$Month)
+
+str(airquality_clean)
+
+table(airquality_clean$Month)
+```
+
+### 2. Explore the distribution
+
+#### • Create an appropriate visualization to compare ozone concentrations among the five months.
+
+```{r}
+library(ggplot2)
+
+ggplot(airquality_clean, aes(x = Month, y = Ozone)) +
+  geom_boxplot() +
+  labs(
+    title = "Ozone Concentrations Across Five Months",
+    x = "Month",
+    y = "Ozone Concentration (ppb)"
+  ) +
+  theme_minimal()
+```
+
+#### • Calculate the sample size, mean, and standard deviation for each month.
+
+```{r}
+library(dplyr)
+
+airquality_clean %>%
+  group_by(Month) %>%
+  summarise(
+    n = n(),
+    mean_ozone = mean(Ozone),
+    sd_ozone = sd(Ozone)
+  )
+```
+
+#### • Briefly describe the differences you observe.
+
+Ozone concentrations varied across the five months, with July and August showing higher mean concentrations than May and September. June had relatively low ozone concentrations, while August showed the highest mean. The variability in ozone concentrations was also greater during July and August, suggesting wider differences in daily ozone levels during these months.
+
+### 3. State the hypotheses
+
+#### • State the null and alternative hypotheses for comparing ozone concentrations among the five months.
+
+#### • Use a significance level of (α = 0.05).
+
+**Null Hypothesis (H₀): There is no significant difference in mean ozone concentrations among May, June, July, August, and September.**
+
+**Alternative Hypothesis (Hₐ): There is a significant difference in mean ozone concentration in at least one of the five months.**
+
+Significance level: α = 0.05
+
+### 4. Assess the assumptions
+
+#### • Examine the distributions using appropriate plots.
+
+```{r}
+ggplot(airquality_clean, aes(sample = Ozone)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_wrap(~Month) +
+  labs(
+    title = "Normal Q-Q Plots of Ozone Concentrations",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
+```
+
+#### • Use the Shapiro–Wilk test to help assess normality.
+
+```{r}
+shapiro.test(
+  airquality_clean$Ozone[airquality_clean$Month == "5"]
+)
+
+shapiro.test(
+  airquality_clean$Ozone[airquality_clean$Month == "6"]
+)
+
+shapiro.test(
+  airquality_clean$Ozone[airquality_clean$Month == "7"]
+)
+
+shapiro.test(
+  airquality_clean$Ozone[airquality_clean$Month == "8"]
+)
+
+shapiro.test(
+  airquality_clean$Ozone[airquality_clean$Month == "9"]
+)
+```
+
+#### • Use Levene's test to assess equality of variances.
+
+```{r}
+library(car)
+
+leveneTest(
+  Ozone ~ Month,
+  data = airquality_clean
+)
+```
+
+### 5. Conduct and report the analysis
+
+#### • Choose and perform the appropriate overall test based on your assessment.
+
+```{r}
+kruskal.test(
+  Ozone ~ Month,
+  data = airquality_clean
+)
+```
+
+#### • If the selected overall test is statistically significant, perform appropriate pairwise comparisons and account for multiple comparisons.
+
+```{r}
+pairwise.wilcox.test(
+  airquality_clean$Ozone,
+  airquality_clean$Month,
+  p.adjust.method = "bonferroni"
+)
+```
+
+### 6. Report and interpret the findings
+
+#### • Write a concise report that includes: the test selected and your justification; the test statistic and p-value; relevant descriptive statistics; the results of any pairwise comparisons; a biological or environmental interpretation of the observed pattern.
+
+A Kruskal–Wallis test was conducted to compare ozone concentrations among the five months because the data showed departures from normality. The test revealed a significant difference in ozone concentration distributions among the months (χ² = 29.267, df = 4, p \< 0.001). August had the highest mean ozone concentration (59.96 ± 39.68 ppb), followed by July (59.12 ± 31.64 ppb), September (31.45 ± 24.14 ppb), June (29.44 ± 18.21 ppb), and May (23.62 ± 22.22 ppb). Pairwise Wilcoxon tests with Bonferroni adjustment showed significant differences between May and July (p = 0.0003), May and August (p = 0.0012), July and September (p = 0.0074), and August and September (p = 0.0325). These findings suggest that ozone concentrations were generally higher during July and August, potentially due to increased sunlight and warmer temperatures that promote ground-level ozone formation.
+
+## 6.3.2 Two-Way ANOVA
+
+### 1. Generate the simulated dataset by running the following code in R.
+
+```{r}
+set.seed(123)
+
+n <- 60
+
+fertilizer <- rep(
+  c("Fertilizer A", "Fertilizer B", "Fertilizer C"),
+  each = n / 3
+)
+
+irrigation <- rep(
+  rep(c("Low", "High"), each = n / 6),
+  3
+)
+
+plant_growth <- rnorm(n, mean = 5, sd = 1) +
+  ifelse(
+    fertilizer == "Fertilizer B", 0.5,
+    ifelse(fertilizer == "Fertilizer C", 1, 0)
+  ) +
+  ifelse(irrigation == "High", 1, 0)
+
+plant_data <- data.frame(
+  Fertilizer = fertilizer,
+  Irrigation = irrigation,
+  Plant_Growth = plant_growth
+)
+
+plant_data$Fertilizer <- as.factor(plant_data$Fertilizer)
+plant_data$Irrigation <- as.factor(plant_data$Irrigation)
+```
+
+### 2. Load and inspect the data using head() and str(). Count the observations in each combination using table().
+```{r}
+head(plant_data)
+str(plant_data)
+table(plant_data$Fertilizer, plant_data$Irrigation)
+```
+
+### 3. Explore the data.
+
+#### a) Calculate the sample size, mean, and standard deviation of plant growth for each combination.
+```{r}
+plant_data_summary <- plant_data %>%
+  group_by(Fertilizer, Irrigation) %>%
+  summarise(
+    n = n(),
+    mean_growth = mean(Plant_Growth),
+    sd_growth = sd(Plant_Growth),
+    .groups = "drop"
+  )
+
+plant_data_summary
+```
+
+#### b) Create a suitable visualization comparing plant growth across fertilizer types and irrigation levels.
+```{r}
+ggplot(
+  plant_data,
+  aes(x = Fertilizer, y = Plant_Growth, fill = Irrigation)
+) +
+  geom_boxplot() +
+  labs(
+    title = "Plant Growth by Fertilizer Type and Irrigation Level",
+    x = "Fertilizer Type",
+    y = "Plant Growth (cm)",
+    fill = "Irrigation Level"
+  ) +
+  theme_minimal()
+```
+
+#### c) Create an interaction plot showing mean plant growth across irrigation levels for each fertilizer type.
+```{r}
+ggplot(
+  plant_data_summary,
+  aes(
+    x = Irrigation,
+    y = mean_growth,
+    color = Fertilizer,
+    group = Fertilizer
+  )
+) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(
+    title = "Interaction Between Fertilizer Type and Irrigation Level",
+    x = "Irrigation Level",
+    y = "Mean Plant Growth (cm)",
+    color = "Fertilizer Type"
+  ) +
+  theme_minimal()
+```
+
+
+### 4. Formulate the hypothesis
+
+#### a) State the null and alternative hypotheses for: the main effect of fertilizer type; the main effect of irrigation level; and the interaction between fertilizer type and irrigation level.
+
+#### b) Use (α = 0.05).
+
+A. Main Effect of Fertilizer Type
+
+- Null Hypothesis (H₀): There is no significant difference in mean plant growth among the three fertilizer types, averaged across irrigation levels.
+- Alternative Hypothesis (Hₐ): At least one fertilizer type has a different mean plant growth, averaged across irrigation levels.
+
+B. Main Effect of Irrigation Level
+
+- Null Hypothesis (H₀): There is no significant difference in mean plant growth between low and high irrigation levels, averaged across fertilizer types.
+- Alternative Hypothesis (Hₐ): There is a significant difference in mean plant growth between low and high irrigation levels, averaged across fertilizer types.
+
+C. Interaction Between Fertilizer Type and Irrigation Level
+
+- Null Hypothesis (H₀): There is no interaction between fertilizer type and irrigation level on plant growth.
+- Alternative Hypothesis (Hₐ): There is an interaction between fertilizer type and irrigation level on plant growth.
+Significance level: α = 0.05
+
+### 5. Assess the assumptions.
+
+#### a) Fit the two-way ANOVA model.
+```{r}
+anova_result <- aov(
+  Plant_Growth ~ Fertilizer * Irrigation,
+  data = plant_data
+)
+
+summary(anova_result)
+```
+
+#### b) Examine the residuals using a histogram and Q-Q plot.
+```{r}
+hist(
+  residuals(anova_result),
+  main = "Histogram of ANOVA Residuals",
+  xlab = "Residuals"
+)
+
+qqnorm(residuals(anova_result))
+qqline(residuals(anova_result))
+```
+
+#### c) Conduct the Shapiro–Wilk test on the residuals.
+```{r}
+shapiro.test(residuals(anova_result))
+
+```
+
+#### d) Use Levene's test to assess equality of variances across the six treatment combinations.
+```{r}
+leveneTest(
+  Plant_Growth ~ Fertilizer * Irrigation,
+  data = plant_data
+)
+```
+
+
+#### e) Briefly describe whether the assumption checks indicate any concerns.
+
+The Shapiro–Wilk test showed no significant departure from normality (W = 0.98084, p = 0.4651). Levene's test also indicated no significant difference in variances among the six treatment combinations (F = 0.3917, p = 0.8524). Since both p-values were greater than 0.05, the assumption checks did not indicate significant concerns regarding normality and homogeneity of variances.
+
+### 6. Perform the statistical analysis.
+```{r}
+summary(anova_result)
+
+TukeyHSD(
+  anova_result,
+  which = "Fertilizer"
+)
+
+TukeyHSD(
+  anova_result,
+  which = "Irrigation"
+)
+```
+
+### 7. Interpret and report the findings.
+
+A two-way ANOVA was conducted to examine the effects of fertilizer type and irrigation level on plant growth. The Shapiro–Wilk (p = 0.4651) and Levene's tests (p = 0.8524) indicated no significant violations of normality or homogeneity of variances. The analysis showed significant main effects of fertilizer type (F(2,54) = 5.789, p = 0.00528) and irrigation level (F(1,54) = 33.552, p < 0.001). Tukey's HSD test revealed that Fertilizer C produced significantly greater plant growth than Fertilizer A (p = 0.0044), while the other fertilizer comparisons were not significant. High irrigation also resulted in significantly greater plant growth than low irrigation, with a mean difference of 1.37 cm (p < 0.001). However, the interaction between fertilizer type and irrigation level was not significant (F(2,54) = 0.646, p = 0.5280), indicating no significant evidence that the effect of fertilizer type depended on irrigation level. These findings suggest that fertilizer type and irrigation level independently influence plant growth.
+
+# Reflection
+
+This laboratory exercise helped me understand how to compare multiple groups using appropriate statistical tests. I learned the importance of checking normality and homogeneity of variances before selecting a statistical method. Using RStudio allowed me to perform ANOVA, Kruskal–Wallis tests, and post-hoc comparisons to identify significant differences among groups. I also gained a better understanding of how interaction effects influence the interpretation of experimental results.
+
+# Conclusion
+
+This laboratory exercise demonstrated the application of statistical methods for comparing three or more groups and examining two-factor effects. The analyses emphasized the importance of assessing statistical assumptions before selecting an appropriate test. The results showed how fertilizer type and irrigation level can significantly affect plant growth without a significant interaction between them. Overall, the exercise strengthened the understanding of statistical analysis and its application in biological research.

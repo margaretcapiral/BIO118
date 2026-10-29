@@ -1,0 +1,398 @@
+---
+title: "Capiral_Margaret_Lab6A"
+output: html_document
+date: "2026-10-26"
+---
+
+Bio 118 Laboratory Exercise 6A
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: October 26, 2026
+
+GitHub repository URL: <https://github.com/margaretcapiral/BIO118.git>
+
+# Introduction
+
+Statistical tests are important in biological research because they help determine whether differences in numerical data are statistically significant. Different tests are used depending on whether the comparison involves a reference value, paired observations, or independent groups. Before conducting these tests, assumptions such as normality must be assessed to ensure that the appropriate statistical method is selected. In this laboratory exercise, RStudio was used to perform statistical analyses, visualize data distributions, and interpret the results of different group comparisons.
+
+# 6.4 Practice Exercise
+
+## 6.4.1 One sample t-test (30 points)
+
+### Environmental researchers measured daily ozone concentrations in New York from May to September 1973. The built-in airquality dataset contains these measurements, along with other environmental variables. Investigate whether the mean of the recorded daily ozone concentrations differs from a hypothetical reference value of 30 ppb.
+
+#### 1. Inspect and prepare the data.
+
+a)  Load the dataset and examine the ozone measurements using head() and str().
+
+```{r}
+data("airquality")
+head(airquality)
+str(airquality)
+```
+
+b)  Check the summary statistics for the Ozone variable.
+
+```{r}
+summary(airquality$Ozone)
+```
+
+c)  The Ozone variable contains missing observations. Identify the available ozone measurements.
+
+```{r}
+sum(is.na(airquality$Ozone))
+sum(!is.na(airquality$Ozone))
+```
+
+c)  Create a dataset containing only observations with recorded ozone values.
+
+```{r}
+library(tidyverse)
+
+ozone_data <- airquality %>%
+  filter(!is.na(Ozone))
+
+head(ozone_data)
+```
+
+c)  Determine the number of observations retained.
+
+```{r}
+nrow(ozone_data)
+```
+
+#### 2. Explore the distribution
+
+-   Create at least one appropriate visualization of the ozone measurements.
+
+<!-- -->
+
+-   Examine the distribution, possible outliers, and any strong skewness.
+
+-   Choose a suitable plot and label its axes clearly.
+
+```{r}
+library(ggplot2)
+ggplot(ozone_data, aes(x = Ozone)) +
+  geom_histogram(bins = 10, color = "white") +
+  labs(
+    title = "Distribution of Daily Ozone Concentrations",
+    x = "Ozone Concentration (ppb)",
+    y = "Number of Days"
+  ) +
+  theme_minimal()
+```
+
+The distribution of ozone concentrations is positively skewed, with most observations concentrated at lower values and fewer observations at higher concentrations.
+
+#### 3. State the hypotheses
+
+-   Write the null and alternative hypotheses for the question of whether the population mean ozone concentration differs from 30 ppb.
+
+-   Use a significance level of (α = 0.05).
+
+    **Null hypothesis (H₀): The population mean daily ozone concentration is equal to 30 ppb (μ = 30).**
+
+    **Alternative hypothesis (Hₐ): The population mean daily ozone concentration differs from 30 ppb (μ ≠ 30).**
+
+#### 4. Assess the assumptions
+
+-   Use a histogram, Q-Q plot, and the Shapiro–Wilk test to assess whether the ozone measurements appear approximately normally distributed.
+
+<!-- -->
+
+-   Choose the appropriate statistical test based on the result of normality assessment.
+
+-   Briefly describe the evidence supporting your choice of test.
+
+```{r}
+ggplot(ozone_data, aes(sample = Ozone)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(
+    title = "Normal Q-Q Plot of Ozone Concentrations",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
+
+ggplot(ozone_data, aes(x = Ozone)) +
+  geom_histogram(bins = 10, color = "white") +
+  labs(
+    title = "Distribution of Daily Ozone Concentrations",
+    x = "Ozone Concentration (ppb)",
+    y = "Number of Days"
+  ) +
+  theme_minimal()
+
+shapiro.test(ozone_data$Ozone)
+```
+
+**The histogram is positively skewed, and the Q-Q plot shows deviations from normality. Since the Shapiro–Wilk test has a p-value below 0.05, the one-sample Wilcoxon signed-rank test was chosen.**
+
+#### 5. Conduct and report the analysis
+
+-   Report the test statistic, p-value, and the relevant estimate and confidence interval provided by R, where available.
+
+```{r}
+wilcox.test(
+  ozone_data$Ozone,
+  mu = 30,
+  alternative = "two.sided",
+  conf.int = TRUE
+)
+```
+
+#### 6. Write your biological/environmental interpretation
+
+-   The recorded daily ozone concentrations in New York were generally higher than the reference value of 30 ppb. The statistical test indicated a significant difference (p \< 0.05). This suggests that ozone concentrations during the study period were elevated relative to the reference value.
+
+## 6.4.2 Paired t-test (35 points)
+
+### The built-in ChickWeight dataset contains the body weights of chicks measured repeatedly over time. The chicks were assigned to different diets, and measurements were recorded at several time points. Investigate the following question: Among chicks with recorded weights at both Day 10 and Day 21, does mean body weight differ between these two time points?
+
+#### 1. Load and inspect the data using head(), str(), and summary().
+
+```{r}
+data("ChickWeight")
+
+head(ChickWeight)
+str(ChickWeight)
+summary(ChickWeight)
+```
+
+#### 2. Prepare complete pairs.
+
+-   Identify chicks with complete pairs before conducting the paired analysis.
+
+-   Create a dataset containing the weights at Day 10 and Day 21.
+
+-   Inspect the resulting dataset
+
+-   Identify and remove chicks that do not have a recorded weight at both time points.
+
+-   Check the number of complete pairs and inspect the differences.
+
+```{r}
+chick_data <- ChickWeight %>%
+  filter(Time %in% c(10, 21))
+
+chick_wide <- chick_data %>%
+  pivot_wider(
+    names_from = Time,
+    values_from = weight,
+    names_prefix = "day"
+  )
+
+head(chick_wide)
+
+sum(is.na(chick_wide$day10))
+sum(is.na(chick_wide$day21))
+
+chick_wide <- chick_wide %>%
+  filter(!is.na(day10), !is.na(day21))
+
+chick_wide <- chick_wide %>%
+  mutate(difference = day21 - day10)
+
+head(chick_wide)
+nrow(chick_wide)
+summary(chick_wide$difference)
+```
+
+#### 3. Explore the data.
+
+-   Create an appropriate visualization to compare chick weights at Day 10 and Day 21.
+
+-   Consider the direction and spread of the differences and whether any observations appear unusual.
+
+```{r}
+ggplot(chick_data, aes(x = factor(Time), y = weight)) +
+  geom_boxplot() +
+  labs(
+    title = "Comparison of Chick Weights at Day 10 and Day 21",
+    x = "Day",
+    y = "Chick Weight (g)"
+  ) +
+  theme_minimal()
+```
+
+#### 4. Formulate the hypothesis
+
+-   Let (d) represent the weight at Day 21 minus the weight at Day 10 for each included chick.
+
+-   Write the null and alternative hypotheses for a two-sided comparison of the population mean difference. Use (α = 0.05).
+
+**H₀: The population mean difference in chick weight between Day 10 and Day 21 is zero (μd = 0).**
+
+**Hₐ: The population mean difference in chick weight between Day 10 and Day 21 is not zero (μd ≠ 0).**
+
+#### 5. Assess the assumptions.
+
+-   Use a Q-Q plot and the Shapiro–Wilk test to assess the distribution of the paired differences.
+
+-   Based on your findings, determine whether a paired t-test or the Wilcoxon signed-rank test is reasonable.
+
+```{r}
+ggplot(chick_wide, aes(sample = difference)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(
+    title = "Normal Q-Q Plot of Paired Differences",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
+
+shapiro.test(chick_wide$difference)
+```
+
+#### 6. Conduct the appropriate test.
+
+```{r}
+t.test(
+  chick_wide$day21,
+  chick_wide$day10,
+  paired = TRUE
+)
+```
+
+#### 7. Interpret and report the findings.
+
+The paired t-test showed a significant difference in chick body weight between Day 10 and Day 21 (t = 12.509, df = 44, p \< 0.001). The mean weight increased from 110.09 g to 218.69 g, with a mean difference of 108.60 g (95% CI: 91.10–126.10 g). Therefore, the null hypothesis is rejected, indicating a significant increase in chick body weight between the two time points.
+
+## 6.4.3 Independent t-test (35 points)
+
+### The built-in PlantGrowth dataset contains the dried weights of plants subjected to three treatment conditions: a control group (ctrl), treatment 1 (trt1), and treatment 2 (trt2). Focus on the control group and treatment 1. Investigate the following question: Does mean plant weight differ between the control group and treatment 1?
+
+#### 1. Load and inspect the data using head(), str(), and summary().
+
+```{r}
+data("PlantGrowth")
+
+head(PlantGrowth)
+str(PlantGrowth)
+summary(PlantGrowth)
+```
+
+#### 2. Select the two groups.
+
+-   Filter the dataset to retain only the control group and treatment 1
+
+-   Check the number of observations in each group.
+
+```{r}
+data_subset <- PlantGrowth %>%
+  filter(group %in% c("ctrl", "trt1"))
+
+head(data_subset)
+
+table(data_subset$group)
+
+data_subset <- droplevels(data_subset)
+
+table(data_subset$group)
+```
+
+#### 3. Formulate the hypothesis.
+
+-   State the null and alternative hypotheses for a two-sided comparison of the population mean plant weights. Use a significance level of (α=0.05).
+
+**Null Hypothesis (H₀): There is no significant difference in the mean plant weights between the control group and treatment 1 (μctrl = μtrt1).**
+
+**Alternative Hypothesis (Hₐ): There is a significant difference in the mean plant weights between the control group and treatment 1 (μctrl ≠ μtrt1).**
+
+#### 4. Explore the data.
+
+-   Create an appropriate visualization to compare the two groups.
+
+```{r}
+ggplot(data_subset, aes(x = group, y = weight)) +
+  geom_boxplot() +
+  labs(
+    title = "Comparison of Plant Weights Between Groups",
+    x = "Group",
+    y = "Plant Weight"
+  ) +
+  theme_minimal()
+```
+
+-   Calculate the sample size, mean, and standard deviation for each group.
+
+```{r}
+data_subset %>%
+  group_by(group) %>%
+  summarise(
+    n = n(),
+    mean_weight = mean(weight),
+    sd_weight = sd(weight)
+  )
+```
+
+-   Examine the distributions and consider whether any observations appear unusual.
+
+The boxplot shows that the control group has a higher median plant weight than treatment 1. Treatment 1 also shows greater variability, with two unusually high values identified as outliers.
+
+#### 5. Assess the assumptions.
+
+-   Use graphical evidence and appropriate diagnostic procedures to assess whether a two-sample t-test is reasonable.
+
+-   Use Q-Q plots and the Shapiro–Wilk test to help assess normality.
+
+```{r}
+ggplot(data_subset, aes(sample = weight)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_wrap(~group) +
+  labs(
+    title = "Normal Q-Q Plots of Plant Weight by Group",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
+
+shapiro.test(
+  data_subset$weight[data_subset$group == "ctrl"]
+)
+
+shapiro.test(
+  data_subset$weight[data_subset$group == "trt1"]
+)
+```
+
+-   If you examine equality of variances, explain what the result means for the choice of test.
+
+```{r}
+library(car)
+
+leveneTest(
+  weight ~ group,
+  data = data_subset
+)
+```
+
+Levene's test shows no significant difference in variances between the two groups (p \> 0.05). Welch's two-sample t-test remains appropriate because it does not require equal variances.
+
+#### 6. Conduct the appropriate test.
+
+```{r}
+t.test(
+  weight ~ group,
+  data = data_subset
+)
+```
+
+#### 7. Interpret and report the findings.
+
+Welch's two-sample t-test showed no significant difference in plant weight between the control group and treatment 1 (t = 1.191, p = 0.2504). The control group had a slightly higher mean weight (5.032) than treatment 1 (4.661). Since p \> 0.05, the null hypothesis was not rejected, indicating no statistically significant difference between the two groups.
+
+# Reflection
+
+This exercise helped me understand how to choose the appropriate statistical test based on the data and research question. I learned that checking assumptions, especially normality, is important before performing statistical analyses. I also became more familiar with using RStudio to create visualizations and interpret statistical results. The activity helped me better understand the importance of statistical testing in biological research.
+
+# Conclusion
+
+This laboratory exercise demonstrated how statistical tests can be used to compare numerical observations. The one-sample, paired, and independent two-sample tests were applied to different datasets. Assessing assumptions and interpreting p-values helped determine whether the observed differences were statistically significant. The exercise showed the importance of selecting appropriate statistical methods to draw reliable conclusions from biological data.
