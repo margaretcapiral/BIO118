@@ -1,0 +1,219 @@
+---
+title: "Capiral_Margaret_Lab7"
+output: html_document
+date: "2026-11-09"
+---
+
+Bio 118 Laboratory Exercise 6A
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: November 9, 2026
+
+GitHub repository URL: <https://github.com/margaretcapiral/BIO118.git>
+
+# Introduction
+
+In biological research, understanding the relationships between variables is important because it helps researchers identify patterns and explain how different factors may be associated with one another. Two statistical methods commonly used to examine these relationships are correlation analysis and simple linear regression. Correlation measures the direction and strength of the association between two quantitative variables, while simple linear regression examines how a predictor variable is related to a response variable and allows predictions to be made. In this laboratory exercise, these methods were applied using R to investigate the relationship between sperm viability and lysozyme levels in crickets, as well as meal size and postprandial temperature change in rattlesnakes. The exercise also involved examining regression assumptions and using the airquality dataset to determine whether temperature is associated with ozone concentration.
+
+# Guide Questions
+
+## 1. Describe the relationship between sperm viability and lysozyme levels in terms of its direction, form, and strength. Are there any unusual observations? (5 points)
+
+The scatterplot shows a weak to moderate negative relationship between sperm viability and lysozyme levels, meaning that lysozyme levels generally decrease as sperm viability increases. The relationship appears approximately linear, although the points are widely scattered. There are also a few unusual observations, particularly crickets with relatively high or low lysozyme levels compared to the other observations.
+
+## 2. Compare the Pearson and Spearman correlation results. What are their respective correlation coefficients and p-values? Do they lead to the same conclusion about the relationship between sperm viability and lysozyme levels? Explain. (6 points)
+
+The Pearson correlation coefficient is r = -0.3444 with a p-value of 0.02748, while the Spearman correlation coefficient is ρ = -0.3046 with a p-value of 0.05285. Both indicate a weak to moderate negative relationship between sperm viability and lysozyme levels. However, at a significance level of 0.05, Pearson correlation shows a statistically significant relationship, while Spearman correlation does not. Therefore, although both methods suggest a negative association, they lead to different conclusions regarding statistical significance.
+
+## 3. What does correlation tell us about the relationship between two variables? Does a statistically significant correlation establish that one variable causes a change in the other? Explain. (4 points)
+
+Correlation measures the direction and strength of the association between two variables. A positive correlation means that both variables tend to increase together, while a negative correlation means that one tends to decrease as the other increases. However, a statistically significant correlation does not establish causation because other factors may influence the relationship between the variables.
+
+## 4. Identify the predictor and response variables. Describe the relationship between meal size and postprandial temperature change based on the scatterplot. Does a straight-line model appear appropriate? Explain. (5 points)
+
+The predictor variable is meal size, while the response variable is postprandial temperature change. The scatterplot shows a strong positive relationship, indicating that rattlesnakes generally experience greater temperature changes as meal size increases. The relationship appears approximately linear, making a straight-line model appropriate, although some observations deviate from the overall trend.
+
+## 5. Write the fitted regression equation. Interpret the intercept and slope in the context of the rattlesnake investigation. Is the intercept biologically meaningful? Explain. (6 points)
+
+\\[ \\widehat{\\text{Temp Change}}=0.31956+0.02738(\\text{Meal Size}) \\]
+
+The intercept (0.31956) represents the predicted postprandial temperature change when meal size is zero. The slope (0.02738) indicates that for every one-unit increase in meal size, the predicted temperature change increases by approximately 0.02738 units. The intercept has limited biological meaning because a meal size of zero means that the rattlesnake did not consume a meal, although the dataset shows that temperature changes can still occur under this condition.
+
+## 6. What is the p-value associated with the slope? State the null and alternative hypotheses. At a significance level of 0.05, what is your decision, and what does the result indicate about the relationship between meal size and postprandial temperature change? (6 points)
+
+# CHANGE
+
+The p-value associated with the slope is 9.38 × 10⁻⁷.
+
+-   Null hypothesis (H₀): The slope is equal to zero, indicating no linear relationship between meal size and postprandial temperature change.
+
+-   Alternative hypothesis (H₁): The slope is not equal to zero, indicating a linear relationship between the two variables.
+
+Since the p-value is less than 0.05, the null hypothesis is rejected. This indicates that meal size is a statistically significant predictor of postprandial temperature change, with larger meal sizes associated with greater temperature changes.
+
+## 7. What are the R-squared and adjusted R-squared values? Interpret the R-squared value in the context of the investigation. (4 points)
+
+The R-squared value is 0.808, while the adjusted R-squared value is 0.7952. The R-squared value indicates that approximately 80.8% of the variation in postprandial temperature change is explained by meal size in the fitted linear regression model. The remaining 19.2% is not explained by the model and may be influenced by other factors.
+
+## 8. What does the shaded area around the regression line represent? Why might some observed points fall outside this region? (4 points)
+
+The shaded area represents the 95% confidence interval for the mean predicted temperature change at different meal sizes. Some observed points fall outside this region because individual rattlesnakes may experience temperature changes that differ from the predicted mean. This variation may be caused by biological differences or other factors not included in the regression model.
+
+## 9. Examine the residual-versus-fitted and Q-Q plots. Do the residuals show any recognizable patterns or departures from the reference line? What do these observations suggest about the suitability of the linear regression model? (5 points)
+
+The residual-versus-fitted plot shows that the residuals are scattered around zero, although there are some noticeable patterns and an unusually large negative residual at higher fitted values. The Q-Q plot also shows deviations from the reference line, particularly at the tails, suggesting that the residuals may not be normally distributed. These observations indicate that the linear regression model generally describes the positive relationship between meal size and temperature change, but some regression assumptions may not be fully satisfied.
+
+## 10. What is the predicted postprandial temperature change for the selected meal size? Explain the difference between the confidence interval for the mean response and the prediction interval for an individual observation. Which is more appropriate for predicting the temperature change of an individual rattlesnake? (5 points)
+
+For the selected meal size of 10 units, the predicted postprandial temperature change is 0.5934 units. The 95% confidence interval for the mean response ranges from 0.4574 to 0.7294, while the 95% prediction interval for an individual observation ranges from 0.1634 to 1.0234. The confidence interval estimates the average temperature change for rattlesnakes with the same meal size, while the prediction interval accounts for the variation in individual responses. Therefore, the prediction interval is more appropriate when predicting the temperature change of an individual rattlesnake because it considers individual variability.
+
+# 7.3 Practice Exercise: Temperature and Ozone Concentration
+
+## 1. Load and prepare the data. (3 points)
+
+### • Load the dataset.
+
+```{r}
+data("airquality")
+```
+
+### • Select the variables and remove missing observations.
+
+```{r}
+airquality <- na.omit(airquality[, c("Temp", "Ozone")])
+```
+
+### • Inspect the data using head() and str().
+
+```{r}
+head(airquality)
+str(airquality)
+```
+
+## 2. Explore the relationship. (5 points)
+
+### • Create a scatterplot to visualize the relationship between temperature and ozone concentration.
+
+```{r}
+library(ggplot2)
+
+ggplot(airquality, aes(x = Temp, y = Ozone)) +
+  geom_point() +
+  labs(
+    title = "Temperature and Ozone Concentration",
+    x = "Temperature (°F)",
+    y = "Ozone Concentration"
+  ) +
+  theme_minimal()
+```
+
+### • Using the scatterplot, describe the direction, form, and strength of relationship.
+
+The scatterplot shows a moderately strong positive relationship between temperature and ozone concentration. As temperature increases, ozone concentration generally increases as well. The relationship appears approximately linear, although the points are somewhat scattered, especially at higher temperatures.
+
+## 3. Perform correlation analysis. (5 points)
+
+### • Perform a Pearson Correlation Test to determine whether temperature and ozone concentration are linearly associated.
+
+```{r}
+# Perform Pearson correlation
+cor_pearson <- cor.test(
+  airquality$Temp,
+  airquality$Ozone,
+  method = "pearson"
+)
+
+cor_pearson
+```
+
+### • Interpret the correlation coefficient and p-value.
+
+The Pearson correlation coefficient (r = 0.6985) indicates a moderately strong positive linear relationship between temperature and ozone concentration. The p-value (p \< 0.05) shows that the relationship is statistically significant. Therefore, the null hypothesis is rejected, suggesting that higher temperatures are significantly associated with higher ozone concentrations.
+
+## 4. Fit a simple linear regression model. (17 points)
+
+### • Use temperature as the predictor variable and ozone concentrations as the response variable.
+
+```{r}
+model <- lm(Ozone ~ Temp, data = airquality)
+
+airquality$fitted <- fitted(model)
+airquality$residuals <- residuals(model)
+
+model
+
+summary(model)
+```
+
+### • Examine and interpret the regression output, including the slope, p-value, and R-squared value.
+
+The slope (2.4287) indicates that for every 1°F increase in temperature, ozone concentration is predicted to increase by approximately 2.43 units. The p-value (p \< 0.05) shows that temperature is a statistically significant predictor of ozone concentration. The R-squared value (0.4877) indicates that approximately 48.77% of the variation in ozone concentration is explained by temperature, while the remaining variation is not explained by the model.
+
+### • Write the fitted regression equation.
+
+\\[ \\widehat{\\text{Ozone}}=-146.9955+2.4287(\\text{Temp}) \\]
+
+### • Add the fitted regression line to your scatterplot.
+
+```{r}
+ggplot(airquality, aes(x = Temp, y = Ozone)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Simple Linear Regression of Temperature and Ozone Concentration",
+    x = "Temperature (°F)",
+    y = "Ozone Concentration"
+  ) +
+  theme_minimal()
+```
+
+## 5. Examine model residuals. (10 points)
+
+### • Create a residual-versus-fitted plot.
+
+```{r}
+ggplot(airquality, aes(x = fitted, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Residuals versus Fitted Values",
+    x = "Fitted Values",
+    y = "Residuals"
+  ) +
+  theme_minimal()
+```
+
+### • Create a normal Q-Q plot.
+
+```{r}
+plot(model, which = 2) # Normal Q-Q plot
+```
+
+### • Based on the residual-versus-fitted plot and normal Q-Q plot, identify any potential departures from the assumptions of linear regression. What do these observations suggest about the suitability of the fitted model?
+
+The residual-versus-fitted plot shows that the residuals are not randomly scattered around zero, with a slight curved pattern and a greater spread at higher fitted values. This suggests possible violations of the linearity and constant variance assumptions. The normal Q-Q plot also shows noticeable deviations from the reference line, particularly in the upper tail, indicating that the residuals may not be normally distributed. Overall, the linear regression model can describe the relationship between temperature and ozone concentration, but these departures suggest that the model may not fully satisfy the regression assumptions.
+
+## 6. Make a prediction. (10 points)
+
+### • Use the fitted model to predict ozone concentration at a temperature of 80°F. Obtain a prediction interval for an individual observation.
+
+```{r}
+predict(model,
+        newdata = data.frame(Temp = 80),
+        interval = "prediction")
+```
+
+### • Interpret the predicted value and its prediction interval in the context of the investigation.
+
+At a temperature of 80°F, the regression model predicts an ozone concentration of approximately 47.30 units. The 95% prediction interval ranges from approximately 0.74 to 93.87 units, indicating that the ozone concentration for an individual day at 80°F could vary considerably. The wide prediction interval suggests that temperature alone cannot accurately predict ozone concentration, as other environmental factors may also influence ozone levels.
+
+# Reflection
+
+This laboratory exercise helped me better understand the difference between correlation and simple linear regression and how they can be used to analyze biological data. I learned that even when two variables show a relationship, it does not necessarily mean that one causes changes in the other. I also realized the importance of interpreting statistical results rather than relying only on p-values, especially when the Pearson and Spearman correlation tests produced different conclusions about statistical significance. Another important lesson was understanding how residual plots and Q-Q plots help determine whether a regression model is appropriate for the data. Through the practice exercise, I was able to apply these concepts using R and better understand how regression models can be used to make predictions while recognizing their limitations.
+
+# Conclusion
+
+This laboratory exercise demonstrated the importance of correlation and simple linear regression in examining relationships between quantitative variables. Correlation analysis helped determine the direction and strength of associations, while simple linear regression provided a way to describe relationships and predict outcomes. The exercise also emphasized that statistical significance does not imply causation and that regression assumptions must be examined before interpreting a model's results. By applying these methods to biological and environmental datasets, the exercise provided a better understanding of how statistical analysis can be used to interpret data and support research findings.
