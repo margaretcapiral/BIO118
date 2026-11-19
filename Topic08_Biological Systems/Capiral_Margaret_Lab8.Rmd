@@ -1,0 +1,843 @@
+---
+title: "Capiral_Margaret_Lab8"
+output: html_document
+date: "2026-11-16"
+---
+
+Bio 118 Laboratory Exercise 8
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: November 9, 2026
+
+GitHub repository URL: <https://github.com/margaretcapiral/BIO118.git>
+
+Group No. 1
+
+Group Members:
+
+Abejar, Liahona Fe
+
+Capiral, Margaret
+
+Quillosa, Danielle Ann
+
+# BIO 118 Laboratory Exercise 8B
+
+# Systems Thinking and Statistical Inquiry
+
+# Introduction
+
+Biological systems consist of interacting components that contribute to patterns observed in living organisms and their environments. Because several factors can be associated with the same outcome, examining one variable at a time may give only a partial picture. Systems thinking helps organize these relationships by identifying the factors involved, how they might interact, and which variables can be measured. Statistical methods such as analysis of variance and multiple linear regression can then be used to examine differences among groups and associations involving several predictors. Together, these approaches help connect biological questions with the evidence gathered from data.
+
+# Scenario: A Coastal Fish Population
+
+### 8.1 Define the system
+
+**Task 1: Give the system a name.**
+
+-   Coastal Fish Population System in a Nearshore Ecosystem
+
+**Task 2: Define its boundary. What is included in your system, and what is outside it?**
+
+-   The system includes the coastal fish population and the environmental, habitat, ecological, and human factors that directly influence it within the selected nearshore ecosystem. These include water conditions, habitat quality, food availability, predators, and fishing activities. Factors outside the system include broader climatic conditions, regional oceanographic processes, and economic activities that may indirectly affect the ecosystem.
+
+**Task 3: Identify the focal component or response you want to understand.**
+
+-   The focal component is the coastal fish population, particularly its abundance and condition. Fish catch per unit effort (CPUE) and fish presence will be considered measurable indicators of the population.
+
+**Task 4: Identify the level of biological organization represented by your focal system and briefly describe its relationship with a smaller and a larger level of organization.**
+
+-   The focal system represents the population level because it focuses on fish of the same species inhabiting a particular coastal area. It is related to the organismal level through the survival, growth, and reproduction of individual fish. It is also part of the larger ecosystem level, where fish interact with other organisms and their surrounding environment.
+
+**Deliverable: One-sentence system description.**
+
+-   The Coastal Fish Population System in a Nearshore Ecosystem examines how environmental conditions, habitat characteristics, food availability, biological interactions, and human activities influence fish abundance and population condition across different coastal sites and seasonal periods.
+
+### 8.2 Identify system components and variables
+
+**Task 1: Identify at least three relevant system components.**
+
+-   The major components of the coastal fish population system include the fish population, environmental conditions, habitat characteristics, food resources, biological interactions, human pressures, and population processes. These components influence one another and contribute to changes in fish abundance and population condition.
+
+**Task 2: Classify each component according to its role.**
+
+-   The fish population serves as the focal biological component. Environmental conditions and habitat characteristics act as environmental influences, while food resources and biological interactions affect fish survival and growth. Human pressures represent external influences that may increase fish mortality. Population processes, such as recruitment and mortality, regulate changes in population size.
+
+**Task 3: Identify which variables can be directly measured.**
+
+-   Directly measurable variables include fish CPUE, fish presence, water temperature, dissolved oxygen, salinity, habitat cover, prey density, predator abundance, and fishing effort. These variables can be recorded through field observations, measurements, or standardized sampling procedures.
+
+**Task 4: Distinguish measurable variables from biological processes that may be difficult to observe directly.**
+
+-   Measurable variables include fish abundance indicators, environmental conditions, habitat cover, prey density, predator abundance, and fishing effort. In contrast, processes such as recruitment, natural mortality, predation rates, and fish movement may be difficult to measure directly because they involve biological events that occur over time. These processes may require additional observations or specialized sampling methods to estimate.
+
+**Deliverable: Component-variable table.**
+
+-   The following table identifies the major system components, their roles, and the variables that can be measured or investigated.
+
+```{r}
+# Component-variable table
+
+library(knitr)
+
+components <- data.frame(
+  System_Component = c(
+    "Fish Population",
+    "Environment",
+    "Habitat",
+    "Food Resources",
+    "Biological Interactions",
+    "Human Pressures",
+    "Population Processes"
+  ),
+
+  Role = c(
+    "Focal biological component",
+    "Physical and chemical conditions",
+    "Habitat condition",
+    "Food availability",
+    "Ecological interactions",
+    "Human activities",
+    "Population regulation"
+  ),
+
+  Measurable_Variables = c(
+    "Fish CPUE, fish presence, fish size distribution",
+    "Water temperature, dissolved oxygen, salinity",
+    "Seagrass cover, coral cover, habitat complexity",
+    "Prey density index, prey abundance",
+    "Predator abundance, competitor abundance",
+    "Fishing effort, fishing frequency",
+    "Recruitment rate, mortality rate"
+  ),
+
+  Measurement_or_Process = c(
+    "Directly measurable",
+    "Directly measurable",
+    "Directly measurable",
+    "Directly measurable",
+    "Directly measurable",
+    "Directly measurable",
+    "Biological processes; may require indirect estimation"
+  )
+)
+
+kable(
+  components,
+  caption = "Major Components and Variables of the Coastal Fish Population System",
+  align = "l"
+)
+```
+
+**Interpretation:**
+
+-   The table shows that the coastal fish population is influenced by several interconnected components. Most environmental, habitat, and human-related variables can be measured directly through field observations. However, biological processes such as recruitment and mortality may require additional methods to estimate their effects on population size.
+
+### 8.3 Construct a systems diagram
+
+**Task 1: Draw your own systems diagram.**
+
+-   The systems diagram illustrates how environmental conditions, habitat quality, food resources, biological interactions, and human activities influence the coastal fish population. These factors affect population processes such as growth, recruitment, and mortality, which contribute to changes in fish abundance. Fish CPUE and fish presence serve as measurable indicators of the population.
+
+**Task 2: Label the arrows to explain the relationships between components.**
+
+-   Environmental conditions influence fish survival and habitat suitability, while habitat quality affects the availability of shelter and nursery areas. Food availability influences fish growth and survival, whereas predators may increase fish mortality. Fishing activities also contribute to population decline by increasing fishing-related mortality. These relationships help explain how different components affect the coastal fish population.
+
+**Task 3: Include at least one plausible feedback or regulatory pathway.**
+
+-   One possible feedback pathway involves fish abundance and fishing activities. When fish abundance increases, catch rates may also increase, potentially encouraging greater fishing effort. Increased fishing effort can result in higher fishing mortality, which may eventually reduce fish abundance. This creates a regulatory feedback pathway within the system.
+
+**Task 4: Use a different symbol, color, or line style to distinguish directly measured variables from proposed biological mechanisms.**
+
+-   Directly measured variables are represented by blue rectangular boxes, while proposed biological mechanisms are represented by yellow oval shapes. Solid arrows indicate relationships among the system components, while dashed arrows represent proposed biological processes that are not directly measured in the dataset.
+
+**Deliverable: Annotated Systems Diagram**
+
+```{r}
+# Load package
+library("DiagrammeR")
+
+# Create systems diagram
+grViz("
+digraph coastal_fish_system {
+
+  graph [
+    layout = dot,
+    rankdir = LR,
+    label = 'Coastal Fish Population System in a Nearshore Ecosystem',
+    labelloc = t,
+    fontsize = 18,
+    fontname = Helvetica,
+    nodesep = 0.5,
+    ranksep = 0.8
+  ]
+
+  node [
+    fontname = Helvetica,
+    fontsize = 10,
+    style = filled,
+    color = gray40
+  ]
+
+  edge [
+    fontname = Helvetica,
+    fontsize = 9,
+    color = gray35,
+    arrowsize = 0.8
+  ]
+
+  # Directly measured variables
+  Environment [
+    label = 'Environmental Conditions\\nTemperature\\nDissolved Oxygen\\nSalinity',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Habitat [
+    label = 'Habitat Characteristics\\nSeagrass Cover\\nCoral Cover\\nHabitat Complexity',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Food [
+    label = 'Food Resources\\nPrey Density',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Predators [
+    label = 'Biological Interactions\\nPredator Abundance',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Fishing [
+    label = 'Human Pressures\\nFishing Effort',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Population [
+    label = 'COASTAL FISH POPULATION\\n(Focal Component)',
+    shape = doubleoctagon,
+    fillcolor = palegreen,
+    fontsize = 12
+  ]
+
+  CPUE [
+    label = 'Fish CPUE',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  Presence [
+    label = 'Fish Presence',
+    shape = box,
+    fillcolor = lightblue
+  ]
+
+  # Proposed biological mechanisms
+  Survival [
+    label = 'Fish Survival',
+    shape = ellipse,
+    fillcolor = lightyellow,
+    style = filled
+  ]
+
+  Growth [
+    label = 'Fish Growth',
+    shape = ellipse,
+    fillcolor = lightyellow,
+    style = filled
+  ]
+
+  Mortality [
+    label = 'Fishing and Natural Mortality',
+    shape = ellipse,
+    fillcolor = lightyellow,
+    style = filled
+  ]
+
+  Recruitment [
+    label = 'Recruitment',
+    shape = ellipse,
+    fillcolor = lightyellow,
+    style = filled
+  ]
+
+  # Environmental and ecological relationships
+  Environment -> Survival [
+    label = 'Affects habitat suitability'
+  ]
+
+  Habitat -> Survival [
+    label = 'Provides shelter'
+  ]
+
+  Habitat -> Recruitment [
+    label = 'Provides nursery areas'
+  ]
+
+  Food -> Growth [
+    label = 'Supports growth'
+  ]
+
+  Predators -> Mortality [
+    label = 'Increases predation'
+  ]
+
+  Fishing -> Mortality [
+    label = 'Increases fishing mortality'
+  ]
+
+  # Population processes
+  Survival -> Population [
+    label = 'Maintains population'
+  ]
+
+  Growth -> Population [
+    label = 'Influences condition'
+  ]
+
+  Recruitment -> Population [
+    label = 'Adds new individuals'
+  ]
+
+  Mortality -> Population [
+    label = 'Reduces abundance'
+  ]
+
+  # Measurable population outputs
+  Population -> CPUE [
+    label = 'Reflected in catch rates'
+  ]
+
+  Population -> Presence [
+    label = 'Reflected in observations'
+  ]
+
+  # Proposed feedback pathway
+  CPUE -> Fishing [
+    label = 'May influence future effort',
+    style = dashed,
+    color = red
+  ]
+
+  # Legend
+  subgraph cluster_legend {
+    label = 'Legend'
+    fontsize = 10
+    style = rounded
+    color = gray60
+
+    Measured [
+      label = 'Directly measured variables',
+      shape = box,
+      fillcolor = lightblue
+    ]
+
+    Proposed [
+      label = 'Proposed biological mechanisms',
+      shape = ellipse,
+      fillcolor = lightyellow
+    ]
+  }
+}
+")
+```
+
+**Interpretation of the Systems Diagram**
+
+-   The diagram shows that the coastal fish population is influenced by environmental, ecological, habitat-related, and human factors. Environmental conditions and habitat characteristics affect fish survival, while food resources contribute to growth. Predation and fishing activities may increase mortality, whereas recruitment adds new individuals to the population. These processes collectively influence fish abundance and condition. Fish CPUE and fish presence provide measurable information about the population. The diagram also presents a possible feedback pathway in which higher catch rates may encourage increased fishing effort, potentially resulting in greater fishing mortality and reduced fish abundance.
+
+### 8.4 Formulate biological research questions
+
+**Task 1: Write two to three research questions.**
+
+1.  RQ1 (Group differences across categorical predictors): Does fish catch per unit effort (CPUE) differ significantly across different coastal habitat types?
+2.  RQ2 (Continuous relationship / Multiple predictors): How do local fishing pressure, habitat cover, and prey density collectively influence fish abundance?
+3.  RQ3 (Binary outcome / Detection probability): How do water temperature, dissolved oxygen, and predator index affect the probability of visual fish detection?
+
+**Task 2: Identify the variables needed to answer each question.**
+
+1.  RQ1: Fish CPUE and habitat type
+
+2.  RQ2: Fish CPUE and fishing pressure, habitat cover, and prey density
+
+3.  RQ3: Fish presence and water temperature, dissolved oxygen, and predator index
+
+**Task 3: Identify the role and measurement type of each variable.**
+
+1.  RQ1: Uses fish CPUE as the continuous response variable and habitat type (4 levels: Coral reef, Mangrove, Mixed, Seagrass) as the nominal categorical explanatory variable.
+
+2.  RQ2: Uses fish CPUE as the continuous response variable, with fishing pressure, habitat cover, and prey density as continuous explanatory variables.
+
+3.  RQ3: Uses fish presence as the binary categorical response variable (Present vs. Absent), with water temperature, dissolved oxygen, and predator index as continuous explanatory variables.
+
+**Deliverable: Research-question variable**
+
+```{r}
+library(knitr)
+
+rq_table <- data.frame(
+  Research_Question = c(
+    "RQ1: Does fish CPUE differ significantly across coastal habitat types?",
+    "RQ2: How do fishing pressure, habitat cover, and prey density collectively influence fish CPUE?",
+    "RQ3: How do water temperature, dissolved oxygen, and predator index affect the probability of fish presence?"
+  ),
+  Inquiry_Type = c(
+    "Group differences",
+    "Continuous multivariable relationship",
+    "Binary outcome / detection probability"
+  ),
+  Response_Variable = c(
+    "Fish CPUE (Continuous)",
+    "Fish CPUE (Continuous)",
+    "Fish Presence (Binary categorical: Present/Absent)"
+  ),
+  Explanatory_Variables = c(
+    "Habitat type (Nominal categorical: 4 groups)",
+    "Fishing pressure (Continuous), Habitat Cover (Continuous), Prey Density (Continuous)",
+    "Temperature (Continuous), Dissolved Oxygen (Continuous), Predator Index (Continuous)"
+  )
+)
+
+kable(
+  rq_table,
+  caption = "Biological Research Questions, Variable Roles, and Measurement Types",
+  align = "l"
+)
+```
+
+### 8.5 Select appropriate statistical methods
+
+**Task 1, Task 2 & Task 3: Identify the appropriate statistical method, explain why it matches the research question and variable types, and identify relevant assumptions or limitations.**
+
+**RQ1 (Group differences across 4 habitat types):**
+
+-   **Statistical Method:** One-Way Analysis of Variance (One-Way ANOVA), followed by Tukey's HSD post-hoc test if significant (or Kruskal-Wallis test if parametric assumptions are violated).
+
+-   **Justification:** One-Way ANOVA tests for differences in the mean of a single continuous response variable (Fish CPUE) across three or more independent categorical groups (habitat type with 4 levels namely coral reef, mangrove, mixed, seagrass).
+
+-   **Assumptions & Limitations:** Assumes independence of transect observations, normal distribution of residuals within each habitat group, and homogeneity of variances (homoscedasticity) across groups. A limitation is that transects are nested within 6 sites and 3 seasons, meaning unmodeled spatial or seasonal variation may contribute to within-group variance.
+
+**RQ2 (Continuous predictors on continuous CPUE):**
+
+-   **Statistical Method:** Multiple Linear Regression (Ordinary Least Squares)
+
+-   **Justification:** Multiple linear regression models the linear relationship between a continuous response variable (Fish CPUE) and multiple continuous explanatory variables (fishing pressure, habitat cover, and prey density index) simultaneously, allowing us to evaluate the partial effect of each ecological or human driver while holding the others constant.
+
+-   **Assumptions & Limitations:** Assumes linearity between predictors and response, independence of errors, homoscedasticity of residuals, normality of residuals, and absence of severe multicollinearity among predictors (e.g., between habitat cover and prey density). Additionally, CPUE is bounded at zero, so extreme predictions could theoretically fall below zero if linearity breaks down.
+
+**RQ3 (Continuous predictors on binary fish presence):**
+
+-   **Statistical Method:** Binary Logistic Regression (Generalized Linear Model with a binomial family and logit link function)
+
+-   **Justification:** Because fish presence is a binary categorical outcome (present vs. absent) recorded from visual transects, ordinary linear regression is inappropriate. Logistic regression models the log-odds (and predicted probability) of fish presence as a function of continuous environmental and biological predictors (temperature, dissolved oxygen, and predator index).
+
+-   **Assumptions & Limitations:** Assumes binary outcome structure, independence of transect observations, linearity in the logit for continuous predictors, and no strong multicollinearity among predictors. A key biological limitation is imperfect detection during visual surveys—an "Absent" record may reflect either true absence or failure to detect cryptic individuals.
+
+**Deliverable: Statistical analysis plan**
+
+```{r}
+library(knitr)
+
+stat_plan <- data.frame(
+  Question = c("RQ1", "RQ2", "RQ3"),
+  Statistical_Method = c(
+    "One-Way ANOVA (with Tukey's HSD post-hoc test)",
+    "Multiple Linear Regression",
+    "Binary Logistic Regression (GLM, binomial family)"
+  ),
+  Alignment_with_Variables = c(
+    "Compares means of a continuous response (CPUE) across 4 categorical habitat groups.",
+    "Models a continuous response (CPUE) as a linear function of multiple continuous predictors (fishing pressure, habitat cover, prey density).",
+    "Models the probability/log-odds of a binary response (fish presence: 1 vs. 0) using continuous predictors (temperature, DO, predator index)."
+  ),
+  Key_Assumptions_and_Limitations = c(
+    "Assumes normality of residuals, equal variance across habitats, and independent transects. Limited by potential site/season clustering.",
+    "Assumes linearity, normality and homoscedasticity of residuals, and low multicollinearity among ecological predictors.",
+    "Assumes linearity in the log-odds, independent observations, and low multicollinearity. Limited by visual detection bias (false absences)."
+  )
+)
+
+kable(
+  stat_plan,
+  caption = "Statistical Analysis Plan for the Coastal Fish Population System",
+  align = "l"
+)
+```
+
+### 8.6 Data Preparation
+
+**Task 1: Import the dataset into R.**
+
+-   **Answer:** The dataset contains 144 observations (6 sites x 3 seasons x 8 transects per site-season) across 17 variables (covering transect identifiers, site/seasonal groupings, environmental measurements, habitat/ecological indices, fishing pressure, and fish catch/presence records).
+
+**Task 2: Inspect the structure and variable types.**
+
+-   **Answer:** Upon import, categorical identifiers and grouping variables (sample_id, site, protection_status, season, transect_id, habitat_type, and fish_presence) are read as character (chr) strings and should be converted to factors (factor), while environmental, ecological, and catch variables are numeric (num/int).
+
+**Task 3: Check the number and distribution of missing values.**
+
+-   **Answer:** There are 48 total missing (NA) cells distributed across 42 rows (leaving 102 complete cases across all 17 columns). Core design variables (site, protection_status, season, habitat_type) and both response variables (CPUE_fish_per_net_hour and fish_presence) have 0 missing values. Missingness appears scattered randomly across sites and seasons (at most 1–2 missing variables per affected row).
+
+**Task 4: Identify which variables are needed for the selected analysis.**
+
+-   **Answer:** RQ1 subset: CPUE_fish_per_net_hour, habitat_type RQ2 subset: CPUE_fish_per_net_hour, fishing_pressure_boats_day, habitat_cover_pct, prey_density_index RQ3 subset: fish_presence, temperature_C, dissolved_oxygen_mg_L, predator_index
+
+**Task 5: Decide how to handle missing observations.**
+
+-   **Answer:** Rather than deleting all 42 rows with any missing value across the entire 17-column dataset (which would unnecessarily discard valid observations for variables not used in a given model), analysis-specific complete-case deletion (listwise deletion per model) is used. Because missing values are sparse and scattered across transects, filtering out NAs only for the specific variables required by each research question preserves maximum sample size (n=144 for RQ1, n=125 for RQ2, and n=124 for RQ3) without introducing artificial variance distortion from mean imputation.
+
+**Task 6: Prepare the response variable appropriately for the regression model.**
+
+-   **Answer:** Since certain variables are already converted to factors and missing values (NAs) are handled, all other variables are ready to use without transformations. For RQ1 and RQ2, CPUE_fish_per_net_hour is already a continuous numeric variable (num) with no missing values; its distribution will be inspected for skewness or outliers prior to fitting linear models. For RQ3, fish_presence is stored as text ("Present" and "Absent"). To fit a binary logistic regression in R (glm(..., family = binomial)), it is converted into a numeric binary indicator fish_presence_bin, alongside an ordered factor version (Absent as the reference level, Present as the target event).
+
+```{r}
+# Load required packages
+library(tidyverse)
+library(knitr)
+library(dplyr)
+
+fish_data <- read.csv("8B_coastal_fish_population.csv", stringsAsFactors = FALSE)
+fish_data
+
+# Inspect dimensions, structure, and variable types
+dim(fish_data)
+str(fish_data)
+summary(fish_data)
+
+# Convert categorical identifiers and grouping variables to factors
+fish_data <- fish_data %>%
+  mutate(
+    sample_id = factor(sample_id),
+    site = factor(site),
+    protection_status = factor(protection_status),
+    season = factor(season, levels = c("Northeast monsoon", "Inter-monsoon", "Southwest monsoon")),
+    transect_id = factor(transect_id),
+    habitat_type = factor(habitat_type),
+    fish_presence = factor(fish_presence, levels = c("Absent", "Present"))
+  )
+
+# Inspect updated structure of all variables
+str(fish_data)
+
+# Create missing value summary per variable
+missing_summary <- data.frame(
+  Variable = names(fish_data),
+  Missing_Count = colSums(is.na(fish_data))
+)
+
+# Add a Total row summing all missing values across the entire dataset
+total_row <- data.frame(
+  Variable = "Total Missing Values",
+  Missing_Count = sum(is.na(fish_data))
+)
+
+missing_summary <- rbind(missing_summary, total_row)
+kable(missing_summary, row.names = FALSE, caption = "Missing Value Counts per Variable")
+
+# Check total missing values, rows with missing values, and row-level distribution
+sum(is.na(fish_data))                    
+sum(rowSums(is.na(fish_data)) > 0)       
+table(rowSums(is.na(fish_data)))
+
+# Create missing value summary per variable
+missing_summary <- data.frame(
+  Variable = names(fish_data),
+  Missing_Count = colSums(is.na(fish_data))
+)
+
+# Add a Total row summing all missing values across the entire dataset
+total_row <- data.frame(
+  Variable = "Total Missing Values",
+  Missing_Count = sum(is.na(fish_data))
+)
+
+missing_summary <- rbind(missing_summary, total_row)
+kable(missing_summary, row.names = FALSE, caption = "Missing Value Counts per Variable")
+
+# Check total missing values, rows with missing values, and row-level distribution
+sum(is.na(fish_data))                    
+sum(rowSums(is.na(fish_data)) > 0)       
+table(rowSums(is.na(fish_data)))
+      
+# Define variable vectors for each analysis
+vars_rq1 <- c("CPUE_fish_per_net_hour", "habitat_type")
+vars_rq2 <- c("CPUE_fish_per_net_hour", "fishing_pressure_boats_day", 
+              "habitat_cover_pct", "prey_density_index")
+vars_rq3 <- c("fish_presence", "temperature_C", 
+              "dissolved_oxygen_mg_L", "predator_index")
+
+# Subset the dataset to only the needed variables per research question
+rq1_raw <- fish_data %>% select(all_of(vars_rq1))
+rq2_raw <- fish_data %>% select(all_of(vars_rq2))
+rq3_raw <- fish_data %>% select(all_of(vars_rq3))
+
+# Inspect structure of each selected subset
+glimpse(rq1_raw)
+glimpse(rq2_raw)
+glimpse(rq3_raw)
+
+data_rq1 <- fish_data %>%
+  select(sample_id, site, season, habitat_type, CPUE_fish_per_net_hour) %>%
+  drop_na()
+
+data_rq2 <- fish_data %>%
+  select(sample_id, site, season, CPUE_fish_per_net_hour,
+         fishing_pressure_boats_day, habitat_cover_pct, prey_density_index) %>%
+  drop_na()
+
+data_rq3 <- fish_data %>%
+  select(sample_id, site, season, fish_presence, 
+         temperature_C, dissolved_oxygen_mg_L, predator_index) %>%
+  drop_na()
+
+# Check final sample sizes for each analysis
+cat("Sample size for RQ1 (ANOVA):", nrow(data_rq1), "\n")
+cat("Sample size for RQ2 (Multiple Linear Regression):", nrow(data_rq2), "\n")
+cat("Sample size for RQ3 (Logistic Regression):", nrow(data_rq3), "\n")
+
+# RQ1: One-Way ANOVA (CPUE across Habitat Types)
+# Ensure habitat_type is a factor and CPUE is numeric with no NAs
+
+class(data_rq1$CPUE_fish_per_net_hour)  
+class(data_rq1$habitat_type)            
+sum(is.na(data_rq1))
+
+# RQ2: Multiple Linear Regression (CPUE ~ Fishing Pressure + Habitat Cover + Prey)
+# Verify RQ2 response and predictors are all numeric with no NAs
+
+str(data_rq2 %>% select(CPUE_fish_per_net_hour, fishing_pressure_boats_day, 
+                        habitat_cover_pct, prey_density_index))
+sum(is.na(data_rq2))
+
+# RQ3: Binary Logistic Regression (Fish Presence ~ Temp + DO + Predator Index)
+# Recode fish_presence ("Absent", "Present") into: 2-level factor with "Absent" as the reference level and numeric 0/1 indicator (0 = Absent, 1 = Present) for glm(..., family = binomial)
+
+data_rq3 <- data_rq3 %>%
+  mutate(
+    fish_presence_factor = factor(fish_presence, levels = c("Absent", "Present")),
+    fish_presence_bin = ifelse(fish_presence == "Present", 1, 0)
+  )
+
+# Verify RQ3 response recoding and predictors
+class(data_rq3$fish_presence_bin)
+levels(data_rq3$fish_presence_factor)
+table(Original = data_rq3$fish_presence, Numeric_0_1 = data_rq3$fish_presence_bin)
+str(data_rq3 %>% select(temperature_C, dissolved_oxygen_mg_L, predator_index))
+sum(is.na(data_rq3))
+```
+
+## 8.7 Perform the selected statistical analyses (20 points)
+
+**Task 1: State the research question and identify the variables.**
+
+| Research question | Response variable | Explanatory variables |
+|----|----|----|
+| **RQ1. Does fish catch per unit effort (CPUE) differ across coastal habitat types?** | `CPUE_fish_per_net_hour`, continuous | `habitat_type`, categorical with four levels: coral reef, mangrove, mixed, and seagrass |
+| **RQ2. How are local fishing pressure, habitat cover, and prey density collectively associated with fish CPUE?** | `CPUE_fish_per_net_hour`, continuous | `fishing_pressure_boats_day`, `habitat_cover_pct`, and `prey_density_index`, all numeric |
+
+**Task 2: Explore the data using an appropriate visualization.**
+
+**RQ1. Boxplot of fish CPUE by habitat type**
+
+```{r}
+library(ggplot2)
+
+ggplot(data_rq1, aes(x = habitat_type, y = CPUE_fish_per_net_hour)) +
+  geom_boxplot() +
+  labs(
+    title = "Fish CPUE by Coastal Habitat Type",
+    x = "Coastal habitat type",
+    y = "CPUE (fish per net-hour)"
+  ) +
+  theme_minimal()
+```
+
+**RQ2. Three-panel scatterplot of fish CPUE against the predictors**
+
+```{r}
+fish_plot <- stack(data_rq2[c(
+  "fishing_pressure_boats_day",
+  "habitat_cover_pct",
+  "prey_density_index"
+)])
+
+fish_plot$CPUE_fish_per_net_hour <- rep(
+  data_rq2$CPUE_fish_per_net_hour,
+  times = 3
+)
+
+levels(fish_plot$ind) <- c(
+  "Fishing pressure (boats per day)",
+  "Habitat cover (%)",
+  "Prey density index"
+)
+
+ggplot(fish_plot, aes(x = values, y = CPUE_fish_per_net_hour)) +
+  geom_point(size = 2, alpha = 0.65) +
+  facet_wrap(~ ind, scales = "free_x", nrow = 1) +
+  labs(
+    title = "Fish CPUE Across the Three Predictors",
+    x = NULL,
+    y = "CPUE (fish per net-hour)"
+  ) +
+  theme_minimal()
+```
+
+**Task 3: Select and perform the appropriate statistical analysis.**
+
+**RQ1. One-way ANOVA.**
+
+```{r}
+model_aov <- aov(CPUE_fish_per_net_hour ~ habitat_type,
+                 data = data_rq1)
+
+summary(model_aov)
+
+plot(model_aov, which = 1)
+plot(model_aov, which = 2)
+```
+
+**RQ2. Multiple linear regression.**
+
+```{r}
+model_mlr_rq2 <- lm(CPUE_fish_per_net_hour ~ fishing_pressure_boats_day +
+                      habitat_cover_pct + prey_density_index,
+                    data = data_rq2)
+
+summary(model_mlr_rq2)
+
+plot(model_mlr_rq2, which = 1)
+plot(model_mlr_rq2, which = 2)
+
+library(car)
+vif(model_mlr_rq2)
+```
+
+**Task 4: Interpret the result in the context of the coastal fish population.**
+
+**RQ1.** The ANOVA provided insufficient evidence of a difference in mean CPUE among habitat types, *F*(3, 140) = **0.387**, *p* = **0.762**. Under the analysis plan in Section 8.5, the nonsignificant overall test did not trigger Tukey’s HSD. Residual spread was similar across habitats, and the Q–Q points roughly followed the reference line.
+
+**RQ2.** The overall regression was significant, *F*(3, 121) = **21.062**, *p* = **4.80 × 10⁻¹¹**, and explained **34.3%** of the observed variation in CPUE. The residuals showed no pronounced curve or funnel, and the Q–Q points roughly followed the reference line. VIF values of **1.04–1.08** indicated little multicollinearity.
+
+| Predictor | Coefficient | *p*-value | Interpretation after accounting for the other predictors |
+|----|----|----|----|
+| Fishing pressure | −0.0112 | 0.782 | The estimated association was small and negative, with insufficient statistical evidence of an association. |
+| Habitat cover | +0.0299 | 8.90 × 10⁻⁸ | A 10-percentage-point increase in cover was associated with about **0.30 more fish per net-hour**. |
+| Prey density index | +0.0283 | 4.04 × 10⁻⁵ | A 10-unit increase in the index was associated with about **0.28 more fish per net-hour**. |
+
+**Task 5: Explain what the result can and cannot establish.**
+
+Both analyses describe differences or associations in **catch rates**. CPUE can vary with fish abundance and catchability, so changes in CPUE cannot be attributed to abundance alone. The models also assume independent errors. Transects surveyed at the same site or during the same season could share conditions, which may affect the p-values. Establishing causation would require a design that accounts for these and other sources of variation.
+
+**Deliverable: Two statistical analyses with a short interpretation.**
+
+**RQ1.** Mangrove transects had the highest median CPUE, but catch rates overlapped across the four habitat types. The one-way ANOVA found insufficient evidence of a difference in mean CPUE among habitats (*F*(3, 140) = 0.387, *p* = 0.762).
+
+**RQ2.** Fishing pressure, habitat cover, and prey density were jointly associated with CPUE (*F*(3, 121) = 21.062, *p* \< 0.001, *R*² = 0.343). Transects with more habitat cover and higher prey density tended to yield more fish per net-hour after accounting for the other predictors. The data provided insufficient evidence of an association between fishing pressure and CPUE (*p* = 0.782).
+
+------------------------------------------------------------------------
+
+## 8.8 Multiple linear regression: Considering multiple predictors (15 points)
+
+A biological system is influenced by multiple interacting factors. For example, fish CPUE may be associated with dissolved oxygen, habitat condition, and food availability. In this section, you will investigate which environmental and ecological variables are associated with fish catch per unit effort using multiple linear regression.
+
+**Response variable (Y):** CPUE_fish_per_net_hour
+
+**Potential predictors (X):**
+
+-   dissolved_oxygen_mg_L
+
+-   habitat_cover_pct
+
+-   prey_density_index
+
+**Tasks:**
+
+Fit a multiple linear regression model and interpret the results by examining:
+
+-   **Whether the predictors are collectively associated with CPUE.**
+
+The overall model was statistically significant, *F*(3, 117) = **34.817**, *p* = **3.71 × 10⁻¹⁶**. Together, dissolved oxygen, habitat cover, and prey density explained variation in CPUE.
+
+-   **The direction and statistical significance of each predictor's association.**
+
+| Predictor | Coefficient | *p*-value | Interpretation with the other predictors held constant |
+|----|----|----|----|
+| Dissolved oxygen | +0.5276 | 1.02 × 10⁻⁶ | A 1 mg/L increase was associated with about **0.53 more fish per net-hour**. |
+| Habitat cover | +0.0313 | 5.36 × 10⁻¹⁰ | A 10-percentage-point increase was associated with about **0.31 more fish per net-hour**. |
+| Prey density index | +0.0231 | 1.72 × 10⁻⁴ | A 10-unit increase was associated with about **0.23 more fish per net-hour**. |
+
+-   **The amount of variation in CPUE explained by the model (R²).**
+
+The model explained **47.2%** of the observed variation in CPUE (*R*² = **0.472**, adjusted *R*² = **0.458**).
+
+-   **Whether the model's residual assumptions are reasonably satisfied.**
+
+The residuals were centered around zero without pronounced curvature. They were somewhat more dispersed in the middle of the fitted range, where most observations occurred, with no clear funnel pattern. The Q–Q plot was approximately linear, with some departures at the tails. VIF values ranged from **1.03 to 1.05**, indicating little multicollinearity. The plots broadly supported using the linear model, while possible dependence among transects within sites or seasons remains a limitation.
+
+Relate your findings to the coastal fish population system.
+
+**Deliverable: Multiple linear regression analysis with a short interpretation.**
+
+```{r}
+data_88 <- na.omit(fish_data[c(
+  "CPUE_fish_per_net_hour",
+  "dissolved_oxygen_mg_L",
+  "habitat_cover_pct",
+  "prey_density_index"
+)])
+
+model_mlr_88 <- lm(CPUE_fish_per_net_hour ~ dissolved_oxygen_mg_L +
+                     habitat_cover_pct + prey_density_index,
+                   data = data_88)
+
+summary(model_mlr_88)
+
+plot(model_mlr_88, which = 1)
+plot(model_mlr_88, which = 2)
+
+library(car)
+
+vif(model_mlr_88)
+```
+
+The model explained 47.2% of the observed variation in CPUE, and all three predictors were positively associated with catch rates after accounting for the others. Transects with more dissolved oxygen, greater habitat cover, and higher prey density tended to yield more fish per net-hour. These patterns are consistent with the roles of water conditions, shelter, and food availability in the coastal fish population system.
+
+------------------------------------------------------------------------
+
+## 8.9 Synthesize findings within the biological system (5 points)
+
+Return to your systems diagram and research questions.
+
+**Tasks:**
+
+Write a short synthesis paragraph addressing:
+
+-   What did your statistical analyses reveal about the coastal fish population system?
+
+-   Which component or relationship in your systems diagram does the result relate to?
+
+-   How does the finding contribute to understanding the coastal fish population?
+
+-   What biological mechanisms might explain the observed pattern?
+
+-   What additional data or investigation would be needed to evaluate those mechanisms?
+
+**Deliverable: Short synthesis paragraph.**
+
+The analyses showed that CPUE was positively associated with habitat cover and prey density in both regression models. Dissolved oxygen was also positively associated with CPUE in Section 8.8. The habitat-type comparison provided insufficient evidence of a difference in mean CPUE among the four habitat categories, and fishing pressure had little statistical support in Section 8.7. These findings relate to the pathways in our systems diagram linking water conditions to survival, habitat cover to shelter and nursery areas, and prey availability to growth. Greater cover may provide refuge, and areas with more prey may attract or support more fish. Catchability could also contribute to the observed patterns. Repeated surveys across sites and seasons, paired with direct measurements of fish abundance, juvenile recruitment, and prey availability, would help evaluate these proposed mechanisms.
+
+# Reflection
+
+This activity made me realize how much the choice of a statistical test depends on the question being asked and the type of data available. Drawing a systems diagram helped me see how different factors could be connected before deciding which relationships to analyze. I also understood why looking at a graph or a p-value alone gives limited information about a biological pattern. Checking the data and examining the model assumptions helped me see how those steps affect the conclusions I can draw. The part I found most useful was learning to explain what a result means biologically and recognize when a possible explanation still needs to be tested.
+
+# Conclusion
+
+Systems thinking and statistical analysis provide a way to study biological questions involving several interacting factors. A systems diagram helps identify relationships worth investigating, while statistical tests show how much support the data provide for those relationships. Analysis of variance can assess differences among groups, and multiple linear regression can estimate how each predictor is associated with an outcome while accounting for the others. The interpretation depends on the quality of the measurements, the study design, and how well the model assumptions are satisfied. Further observations or experiments can help determine whether the proposed biological mechanisms explain the patterns found in the data.
