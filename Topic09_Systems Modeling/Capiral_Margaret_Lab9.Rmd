@@ -1,0 +1,227 @@
+---
+title: "Capiral_Margaret_Lab9"
+output: html_document
+date: "2026-11-26"
+---
+
+Bio 118 Laboratory Exercise 9
+
+Name: Margaret Capiral
+
+Section: A2
+
+Date: November 26, 2026
+
+GitHub repository URL: <https://github.com/margaretcapiral/BIO118.git>
+
+# BIO 118 Laboratory Exercise 9
+
+# Modeling Biological Systems
+
+# Introduction
+
+Biological systems consist of interacting components that influence how a system changes over time. System dynamics modeling provides a mathematical and computational approach to understanding these interactions through stocks, flows, and parameters. In this laboratory exercise, the `sdbuildR` package in R was used to construct models of plant biomass growth under varying water availability and bacterial population growth under resource limitation. Through simulation and scenario analysis, the exercise aimed to demonstrate how changes in environmental conditions and model parameters influence the behavior and regulation of biological systems.
+
+## **Task 1. Identify the stock, inflow, outflow, and parameters of the model. (5 points)**
+
+| Component | Model representation | Value or equation |
+|----|----|----|
+| Bacterial population density | Stock | 1,000,000 cells/mL |
+| Cell division | Inflow | r × N |
+| Density-dependent growth reduction | Outflow | r × N² / K |
+| Intrinsic growth rate (r) | Constant | 0.8 per day |
+| Carrying capacity (K) | Constant | 1,000,000,000 cells/mL |
+
+## **Task 2. Draw the conceptual stock-and-flow diagram. (5 points)**
+
+![](images/Screenshot%202026-11-26%20at%209.05.13%20PM-01.png){width="500"}
+
+## Task 3
+
+```{r}
+library(sdbuildR)
+
+# Create an empty model
+bacterial_model <- stockflow()
+
+# Add model information
+bacterial_model <- meta(
+  bacterial_model,
+  name = "Bacterial Population Growth Model",
+  caption = "Bacterial population growth under resource limitation"
+)
+
+# Define bacterial population stock
+bacterial_model <- stock(
+  bacterial_model,
+  population,
+  eqn = 1000000,
+  label = "Bacterial Population"
+)
+
+# Visualize the model
+plot(bacterial_model)
+
+# Add cell division (inflow)
+bacterial_model <- flow(
+  bacterial_model,
+  growth,
+  eqn = "growth_rate * population",
+  to = "population",
+  label = "Cell Division"
+)
+
+# Add density-dependent growth reduction (outflow)
+bacterial_model <- flow(
+  bacterial_model,
+  limitation,
+  eqn = "growth_rate * population^2 / carrying_capacity",
+  from = "population",
+  label = "Density-dependent Growth Reduction"
+)
+
+# Visualize the model
+plot(bacterial_model)
+
+# Define model parameters
+bacterial_model <- bacterial_model |>
+  constant(
+    growth_rate,
+    eqn = 0.8,
+    label = "Intrinsic Growth Rate"
+  ) |>
+  constant(
+    carrying_capacity,
+    eqn = 1000000000,
+    label = "Carrying Capacity"
+  )
+
+# Display the defined constants
+as.data.frame(bacterial_model, type = "constant")
+
+# Display the model structure, including constants
+plot(bacterial_model, show_constants = TRUE)
+```
+
+## Task 4
+
+```{r}
+# Check model structure and equations
+summary(bacterial_model)
+
+# Display the defined constants
+as.data.frame(bacterial_model, type = "constant")
+```
+
+## Task 5
+
+```{r}
+# Set simulation period
+bacterial_model <- sim_settings(
+  bacterial_model,
+  start = 0,
+  stop = 20,
+  time_units = "days"
+)
+
+# Run the simulation
+bacterial_sim <- simulate(bacterial_model)
+
+# View the simulation results
+head(as.data.frame(bacterial_sim))
+
+# View the final simulation values
+tail(as.data.frame(bacterial_sim))
+```
+
+## Task 6
+
+```{r}
+# Plot simulation results
+plot(bacterial_sim)
+```
+
+## Task 7
+
+```{r}
+# Create a model with reduced carrying capacity
+bacterial_model_low_capacity <- update(
+  bacterial_model,
+  carrying_capacity,
+  eqn = 500000000
+)
+
+# Simulate reduced carrying capacity
+bacterial_sim_low_capacity <- simulate(
+  bacterial_model_low_capacity
+)
+
+# Visualize the results
+plot(bacterial_sim_low_capacity)
+```
+
+## Task 8
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Extract baseline results
+baseline <- as.data.frame(bacterial_sim) |>
+  filter(variable == "population") |>
+  mutate(Scenario = "Baseline")
+
+# Extract reduced carrying capacity results
+low_capacity <- as.data.frame(bacterial_sim_low_capacity) |>
+  filter(variable == "population") |>
+  mutate(Scenario = "Reduced carrying capacity")
+
+# Combine results
+comparison <- bind_rows(baseline, low_capacity)
+
+# Plot both scenarios
+ggplot(comparison, aes(x = time, y = value,
+                       color = Scenario)) +
+  geom_line(linewidth = 1) +
+  labs(
+    title = "Bacterial Population Under Different Carrying Capacities",
+    x = "Time (days)",
+    y = "Bacterial Population (cells/mL)",
+    color = "Scenario"
+  ) +
+  theme_minimal()
+```
+
+## **Answer the following questions:**
+
+### 9. What does carrying capacity represent in this model, and why does population growth slow as the population approaches this limit? (5 points)
+
+Carrying capacity (K) represents the maximum bacterial population density that the environment can sustainably support given its available nutrients, space, and other resources. In this model, the baseline carrying capacity is set at 1,000,000,000 cells/mL. As the bacterial population increases, competition for limited resources becomes more pronounced, resulting in greater density-dependent growth reduction. Consequently, the net population growth rate decreases as the population approaches its carrying capacity. When the population reaches carrying capacity, the inflow and outflow become equal, resulting in zero net population growth.
+
+### 10. How does the model predict population behavior when the initial population is very close to or exceeds carrying capacity? (4 points)
+
+When the initial population is close to but below the carrying capacity, the model predicts a slow increase in population density until equilibrium is approached. When the initial population is equal to the carrying capacity, the population remains stable because the net growth rate is zero. However, when the initial population exceeds the carrying capacity, density-dependent growth reduction exceeds population growth, resulting in a negative net growth rate. The population consequently decreases toward the carrying capacity.
+
+### 11. What biological factors or processes are not explicitly represented in this model? (4 points)
+
+The model does not explicitly represent the lag phase, stationary-phase physiological changes, and death phase of bacterial growth. Other factors, such as nutrient depletion, accumulation of metabolic waste products, changes in pH, temperature fluctuations, and oxygen availability, are also not individually represented. Instead, the combined effects of resource limitation are simplified through the carrying capacity and density-dependent growth reduction. The model also assumes that the intrinsic growth rate and carrying capacity remain constant throughout the simulation.
+
+### 12. How would you classify the biological system represented by the model in terms of its level of biological organization and its behavior over time? Briefly justify your classification. (3 points)
+
+The system is classified as a **population-level biological system** because it represents changes in the density of a bacterial population rather than individual bacterial cells. In terms of its behavior over time, it is a **dynamic, nonlinear, and deterministic system** because population density changes over time according to a nonlinear mathematical relationship with fixed parameters. It also exhibits self-regulating behavior as the population approaches a stable equilibrium determined by its carrying capacity.
+
+### 13. Identify the major components of the bacterial population system and explain how their interactions influence population growth and its regulation. (5 points)
+
+The major components of the system are bacterial population density, cell division, density-dependent growth reduction, intrinsic growth rate, and carrying capacity. Bacterial population density serves as the stock, while cell division acts as the inflow that increases the population. Density-dependent growth reduction serves as the outflow that regulates net population growth as population density increases. The intrinsic growth rate determines the potential rate of population increase, while carrying capacity determines the maximum sustainable population density. The interaction among these components produces a logistic growth pattern in which the population initially increases rapidly before gradually stabilizing as resource limitations become more pronounced.
+
+### 14. What type of feedback mechanism is represented in the model? Explain how this feedback influences bacterial population growth as the population approaches carrying capacity. (4 points)
+
+The model incorporates both **positive (reinforcing) feedback and negative (balancing) feedback**. Positive feedback occurs through cell division, wherein an increase in bacterial population density leads to an increase in the number of reproducing cells, further increasing the population. Negative feedback occurs through density-dependent growth reduction, which becomes stronger as population density increases relative to carrying capacity. As the population approaches carrying capacity, negative feedback counteracts the reinforcing effect of cell division, reducing net population growth. Eventually, the two processes balance each other, allowing the population to approach a stable equilibrium.
+
+# Reflection
+
+This laboratory exercise helped me understand how mathematical equations can be used to represent biological processes and predict changes within a system over time. Initially, I found constructing the stock-and-flow models challenging, particularly in defining the relationships between the different model components and resolving errors in R. However, working through the exercise helped me better understand how environmental factors and feedback mechanisms influence population growth and regulation. I also realized that although computational models simplify actual biological processes, they are useful in examining how changes in specific parameters can affect the overall behavior of a system.
+
+# Conclusion
+
+System dynamics modeling demonstrated how interactions among stocks, flows, and parameters influence the behavior of biological systems over time. The plant biomass model showed that reduced water availability resulted in slower biomass accumulation, while the bacterial population model demonstrated that a lower carrying capacity resulted in a lower limiting population density. These models also illustrated the importance of reinforcing and balancing feedback mechanisms in biological growth and regulation. Although the models do not explicitly represent all factors affecting plant and bacterial growth, they provide a useful framework for understanding, simulating, and predicting the dynamics of biological systems under different environmental conditions.
